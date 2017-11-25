@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">대시 조종기</string>
+    <string name="searching">찾는 중</string>
+    <string name="not_found">찾기 실패</string>
+    <string name="search">찾았다!</string>
+    <string name="bluetooth_no">블루투스 미지원</string>
+    <string name="bluetooth_disabled">블루투스가 꺼져 있음</string>
+    <string name="bluetooth_ble_no">BLE 미지원</string>
+    <string name="connected">연결됨</string>
+    <string name="connecting">연결 중</string>
+    <string name="disconnecting">연결 해제중</string>
+    <string name="ready">작동 중</string>
+    <string name="left">좌회전</string>
+    <string name="right">우회전</string>
+    <string name="forward">전진</string>
+    <string name="backward">후진</string>
+    <string name="sound_play">효과음 발생</string>
+    <string name="head">머리 방향</string>
+    <string name="head_up">위쪽</string>
+    <string name="head_bottom">아래</string>
+    <string name="head_left">왼쪽 90도</string>
+    <string name="head_right">오른쪽 90도</string>
+    <string name="head_center">정면</string>
+    <string name="back">Back to the main</string>
+    <string name="camera_error">This device does not support Camera2 API.</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="pattern">Pattern</string>
+    <string name="logo">Logo</string>
+    <string name="tutorial">Tutorial mode</string>
+    <string name="free">Free mode</string>
+    <string name="game">Game mode</string>
+    <string name="init"></string>
+</resources>

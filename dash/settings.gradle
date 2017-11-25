@@ -1,0 +1,2 @@
+include ':app', ':dashcontrol-release'
+include ':openCVLibrary331'
