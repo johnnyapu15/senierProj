@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -28,12 +29,20 @@ import org.opencv.core.Mat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static java.lang.Thread.sleep;
 
 
 public class InitActivity extends AppCompatActivity
         implements CameraBridgeViewBase.CvCameraViewListener2 {
 
-
+    MediaPlayer mp1;
+    MediaPlayer mp2;
+    String msg1 = "msg1";
+    String msg2 = "msg2";
+    String msg3 = "msg3";
     Dash d;
     ImageView framec;
 
@@ -68,8 +77,6 @@ public class InitActivity extends AppCompatActivity
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setCameraIndex(1); // front-camera(1),  back-camera(0)
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-
-
     }
 
     @Override
@@ -166,17 +173,23 @@ public class InitActivity extends AppCompatActivity
         }, 8000);
 
         Toast.makeText(getApplicationContext(), "초록색 원 정중앙에 물체를 올리고 원을 따라가주세요. ", Toast.LENGTH_SHORT).show();
+
+        OutputSound(mp1, msg1);
         Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
         Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
         Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
-        // 작업
 
-
+        //TODO : 적절한 delay값 입력해야함
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                OutputSound(mp2, msg2);
+            }
+        },8000);
 
         //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
         Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
         Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
-
 
 
         //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
@@ -199,5 +212,18 @@ public class InitActivity extends AppCompatActivity
         //finish();
     }
 
+    protected void OutputSound(MediaPlayer mp, String sound)
+    {
+        if(mp != null) {
+            mp.reset();
+            mp.release();}
+        if(sound == msg1)
+            mp = MediaPlayer.create(this, R.raw.msg1);
+        else if(sound == msg2)
+            mp = MediaPlayer.create(this, R.raw.msg2);
+        else if(sound == msg3)
+            mp = MediaPlayer.create(this, R.raw.msg2);
+        mp.start();
 
+    }
 }
