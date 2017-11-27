@@ -85,7 +85,7 @@ public class FreeActivity extends AppCompatActivity
                 Log.d("send", "delta : "+deltaX+", "+deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
             }
-        }, 0, 1000 );
+        }, 0, 300 );
 
     }
 
@@ -220,8 +220,6 @@ public class FreeActivity extends AppCompatActivity
 
     public void backButtonClicked(View v) {
         timer.cancel();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
         this.finish();
     }
 

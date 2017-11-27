@@ -153,17 +153,14 @@ public class MainActivity extends AppCompatActivity
     public void button1Clicked(View view) {
         Intent intent = new Intent(getApplicationContext(), TutorialActivity.class);
         startActivity(intent);
-        this.finish();
     }
     public void button2Clicked(View view) {
         Intent intent = new Intent(getApplicationContext(), FreeActivity.class);
         startActivity(intent);
-        this.finish();
     }
     public void button3Clicked(View view) {
         Intent intent = new Intent(getApplicationContext(), GameActivity.class);
         startActivity(intent);
-        this.finish();
     }
 
     public void exitButtonClicked(View view) {
@@ -280,6 +277,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+        mOpenCvCameraView.enableView();
         super.onResume();
     }
 

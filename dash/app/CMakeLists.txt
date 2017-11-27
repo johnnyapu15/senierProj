@@ -32,6 +32,8 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp
+             src/main/cpp/HSVFilter.h
+             src/main/cpp/HSVFilter.cpp
             #Pattern mat
              src/main/cpp/patternMatch/useDNN.cpp
              src/main/cpp/patternMatch/patternMatch.cpp
