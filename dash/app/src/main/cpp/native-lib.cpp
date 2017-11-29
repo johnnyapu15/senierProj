@@ -64,6 +64,23 @@ Java_com_example_dlscj_dash_Dash_getPredicted(JNIEnv *env, jobject instance, jst
     getPredicted(metStr, tmpConfs);
     (*env).SetFloatArrayRegion(confidences, 0, 8, tmpConfs);
     free(tmpConfs);
+    free(metStr);
+    free(tmpChar);
+}
+
+//It uses index of classes for pattern validation. ex) CIRCLE -> 0, N -> 1 ...
+//CLASSES : {"CIRCLE", "N", "L", "RECT", "RS", "S"};
+//               0      1    2     3      4     5
+JNIEXPORT jboolean JNICALL
+Java_com_example_dlscj_dash_Dash_isValidPattern(JNIEnv *env, jobject instance, jint idx, jfloat threshold){
+    bool vaild = true;
+
+    int first, second = 0;
+    getTwoTop(first, second, threshold);
+
+    vaild = ((idx == first) || (idx == second));
+
+    return valid;
 }
 
 

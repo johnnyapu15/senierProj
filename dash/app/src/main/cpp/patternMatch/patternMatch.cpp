@@ -8,7 +8,7 @@
 #define DEG2RAD 0.0174533
 #define MARGIN 7
 
-
+private String[6] classes = {"CIRCLE", "N", "L", "RECT", "RS", "S"};
 int preT;
 float preVelo;
 float preAngle;
@@ -84,6 +84,45 @@ void getPredicted(String predAlgorithm, float* confs) {
 		forwardPatternNN(tmp, confs);
 	}
 
+}
+
+void getTwoTop(int first, int second, float threshold){
+	//20171129 Johnnyapu15
+	//get confidence using CNN-LeNet and calc two-top label.
+	
+	int idx = -1;
+	int idx2 = -1;
+	float tmpConf = -1;
+	float* conf = new float[];
+
+	//Get predicted confidence
+	getPredicted("CNN", conf);
+
+	//Find maximum item
+	for (int i = 0; i < 6; i++){
+		if (tmpConf < conf[i]) {
+			idx = i;
+			tmpConf = conf[i];
+		}
+	}
+	if (!(tmpConf > threshold))
+		first = idx;
+	else first = -1;
+	tmpConf = -1;
+
+	//Find 2nd item
+	for (int i = 0; i < 6; i++){
+		if (tmpConf < conf[i])
+			if (idx != i) {
+				idx2 = i;
+				tmpConf = conf[i];
+			}
+	}
+	if (!(tmpConf > threshold))
+		second = idx2;
+	else second = -1;
+	
+	delete conf;
 }
 
 void getImageFromParam(Mat& img) {

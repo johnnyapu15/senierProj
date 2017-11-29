@@ -14,7 +14,7 @@
 void initParam2Img(int time);
 void updateParam2Img(int time, float v, float a);
 void getPredicted(String predAlgorithm, float* confs);
-
+void getTwoTop(int first, int second, float threshold);
 void getImageFromParam(Mat& img);
 
 #endif // !patternMatch
