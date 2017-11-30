@@ -64,47 +64,57 @@ public class TutorialActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
 
-        d = (Dash)getApplicationContext();
-        back = (ImageButton)findViewById(R.id.backButtont);
-        next = (ImageButton)findViewById(R.id.nextButtont);
-        exit = (ImageButton)findViewById(R.id.exitButtont);
+        d = (Dash) getApplicationContext();
+        back = (ImageButton) findViewById(R.id.backButtont);
+        next = (ImageButton) findViewById(R.id.nextButtont);
+        exit = (ImageButton) findViewById(R.id.exitButtont);
 
-        mOpenCvCameraView = (CameraBridgeViewBase)findViewById(R.id.activity_surface_view);
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.activity_surface_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setCameraIndex(1); // front-camera(1),  back-camera(0)
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
 
-
         timer.schedule(new TimerTask() {
             public void run() {
-                Log.d("send", "delta : "+deltaX+", "+deltaY);
+                Log.d("send", "delta : " + deltaX + ", " + deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
+
             }
-        }, 0, 300 );
+        }, 0, 300);
 
 
         // 이미지 로딩
-
-
-
-
 
 
         //int a = (int)System.currentTimeMillis();
         //float[] conf = null;
 
 
-
-
-
-
-
+        ////Start new pattern, init current canvas.
         //d.initParam2Img(a, this.getFilesDir().getPath() + "/resDir/");
 
-        //d.updateParam2Img(a + 5, 20, 30 );
+
+        ////When control dash
+        //if(isCanvas){
+        //  d.updateParam2Img((int)System.currentTimeMillis(), deltaY, deltaX );
+        //}
         //d.updateParam2Img(a + 10, 10, -40 );
+
+
+        ////Compare pattern with current stage's
+        //if (d.isVaildPattern(currentStagePatternIndex, PATTERN_THRESHOLD)){
+        //  GO TO NEXT STAGE
+        //}
+        //else{
+        //  RESUME
+        //}
+
+        ////Reset canvas
+        //d.initParam2Img((int)System.currentTimeMillis());
+
+        ////
         //d.getPredicted("CNN", conf);
     }
 

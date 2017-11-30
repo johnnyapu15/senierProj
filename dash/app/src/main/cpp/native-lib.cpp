@@ -52,6 +52,12 @@ Java_com_example_dlscj_dash_Dash_initParam2Img(JNIEnv *env,jobject instance, jin
 }
 
 JNIEXPORT void JNICALL
+Java_com_example_dlscj_dash_Dash_initCanvas(JNIEnv *env,jobject instance){
+    initCanvas();
+}
+
+
+JNIEXPORT void JNICALL
 Java_com_example_dlscj_dash_Dash_updateParam2Img(JNIEnv *env, jobject instance, jint time, jfloat velo, jfloat angle){
     updateParam2Img((int)time, (float)velo, (float)angle);
 }

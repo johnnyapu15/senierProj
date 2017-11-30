@@ -15,12 +15,14 @@ float preAngle;
 float angleD;
 Point2d prePoint;
 Point2d minPoint, maxPoint;
-vector<Point2d> pointVec;
+vector<Point2d> pointVec = NULL;
 
 
 
 //Functions of initiation and update paramter, getting predicted are used within JNI.
 void initParam2Img(int time) {
+	free(pointVec);
+	pointVec = new vector<Point2d>;
 	minPoint.x = 200 - MARGIN;
 	minPoint.y = 200 - MARGIN;
 	maxPoint.x = 200 + MARGIN;
@@ -32,6 +34,10 @@ void initParam2Img(int time) {
 	prePoint = Point2d(200, 200);
 	pointVec.push_back(prePoint);
 	//pointVec.push_back(prePoint);
+	
+}
+void initPatternNN(String path){
+	setParam(path + "/pattern.caffemodel", path + "/pattern.prototxt");
 	initPatternNN();
 }
 void updateParam2Img(int time, float v, float a) {
