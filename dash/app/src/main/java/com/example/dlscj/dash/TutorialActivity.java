@@ -21,17 +21,6 @@ public class TutorialActivity extends AppCompatActivity {
 
         d = (Dash)getApplicationContext();
 
-
-        //JJA
-        d.initParam2Img(time, this.getFilesDir().getPath());
-
-        //d.updateParam2Img(a + 5, 20, 30 );
-        //d.updateParam2Img(a + 10, 10, -40 );
-        //d.getPredicted("CNN", conf);
-
-
-        //Timer for dash control signal
-
     }
 
 }
