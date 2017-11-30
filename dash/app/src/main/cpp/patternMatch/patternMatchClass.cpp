@@ -1,75 +1,29 @@
-#include <vector>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/dnn.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/core/utils/trace.hpp>
-//#include <fstream>
-//#include <iostream>
-//#include <cstdlib>
-#include <math.h>
-
-using namespace cv;
-using namespace cv::dnn;
-using namespace std;
+#include "patternMatchClass.h"
 
 #define OUTLAYER "ip2"  //Define out-layer name of Neural Network 
 #define IMGSIZE 32      //Define image size used in NN. (Square img)
 #define TIMEVALUE 0.1	//The time dimension is on sec/10.
 #define DEG2RAD 0.0174533
 #define MARGIN 7
+#define CLASSNUM 6
 
-class patternMatch{
-private:
-    //(In the legacy code: patternMatchAlgo)
-    void setParam(String pm, String pp);
-    void initPatternNN();
-    void cmp(int det, float conf, int& preDet, float& preConf);
-    void forwardPatternNN(Mat& img, float* confidences);
-
-    String pModel = "/pattern.caffemodel";
-    String pProto = "/pattern.prototxt";
-    Net net = NULL;   
-
-
-    //(In the legacy code: useDNN)
-    void initNN(String modelBin, String modelTxt, Net& net);
-    void forwardNN(Net& net, String outLayer, Mat image, Size size, Scalar mean, Mat& prob);
-
-
-    //(In the legacy code: patternMatch)
-    //Functions of initiation and update paramter, getting predicted are used within JNI.
-    void initParam2Img(int time);
-    void initPatternNN(String path);
-    void updateParam2Img(int time, float v, float a);
-    void getPredicted(float* confs);
-    void getTwoTop(int first, int second, float threshold);
-    void getImageFromParam(Mat& img);
-
-    int preT;
-    float preVelo;
-    float preAngle;
-    float angleD;
-    Point2d prePoint, minPoint, maxPoint;
-    vector<Point2d> pointVec = NULL;
-
-public:
-
-    patternMatch(){
-        //net = new Net();
-        //pointVec = new vector<Point2d>;
-    }
-    ~patternMatch(){
-		if (net != NULL)
-			delete(net);
-		if (pointVec != NULL)
-			delete(pointVec);
-    }
+patternMatch::patternMatch() {
+	//net = new Net();
+	//pointVec = new vector<Point2d>;
+}
+patternMatch::~patternMatch() {
+	if (net != NULL)
+		delete(net);
+	if (pointVec != NULL)
+		delete(pointVec);
+	if (confidence != NULL)
+		delete(confidence);
 }
 
 //Initialize canvas & parameters
 void patternMatch::initParam2Img(int time){
+	if (confidence != NULL) delete confidence;
+	confidence = new float[CLASSNUM];
     if (pointVec != NULL) delete pointVec;
 	pointVec = new vector<Point2d>;
 	minPoint.x = 200 - MARGIN;
@@ -81,27 +35,27 @@ void patternMatch::initParam2Img(int time){
 	preAngle = -90 * DEG2RAD;
 	angleD = 0;
 	prePoint = Point2d(200, 200);
-	pointVec.push_back(prePoint);
+	pointVec->push_back(prePoint);
 }
 
 //Initialize CNN for pattern classifier
 //Use path of caffemodel, prototxt file
-void patternMatch::initPatternNN(String path){
-	if (net != NULL) delete net;
-	net = new Net();
+void patternMatch::initPatternNN(string path){
+	if (this->net != NULL)
+		delete this->net;
     pModel = path + "/pattern.caffemodel";
     pProto = path + "/pattern.prototxt";
     
 	try {
-		net = dnn::readNetFromCaffe((const)proto, (const)bin);
+		this->net = new Net(dnn::readNetFromCaffe((const string)pProto, (const string)pModel));
 	}
 	catch (cv::Exception& e) {
 		std::cerr << "Exception: " << e.what() << std::endl;
-		if (net.empty())
+		if (this->net->empty())
 		{
 			std::cerr << "Can't load network by using the following files: " << std::endl;
-			std::cerr << "prototxt:   " << pModel << std::endl;
-			std::cerr << "caffemodel: " << pProto << std::endl;
+			std::cerr << "prototxt:   " << pProto << std::endl;
+			std::cerr << "caffemodel: " << pModel << std::endl;
 			exit(-1);
 		}
 	}
@@ -133,7 +87,7 @@ void patternMatch::updateParam2Img(int time, float v, float a){
             if (maxPoint.y < presPoint.y + MARGIN) maxPoint.y = presPoint.y + MARGIN;
 
             //Append current point to point list.
-            pointVec.push_back(presPoint);
+            pointVec->push_back(presPoint);
 
             //preT = time;
             preT++;
@@ -144,7 +98,7 @@ void patternMatch::updateParam2Img(int time, float v, float a){
         }
         preVelo = v;
         angleD = a * DEG2RAD;
-        free(presPoint);
+        //free(presPoint);
     }
 }
 
@@ -156,16 +110,15 @@ void patternMatch::getTwoTop(int first, int second, float threshold){
 	int idx = -1;
 	int idx2 = -1;
 	float tmpConf = -1;
-	float* conf = new float[];
 
 	//Get predicted confidence
-	this.getPredicted(conf);
+	//this->getPredicted(conf);
 
 	//Find maximum item
-	for (int i = 0; i < 6; i++){
-		if (tmpConf < conf[i]) {
+	for (int i = 0; i < CLASSNUM; i++){
+		if (tmpConf < confidence[i]) {
 			idx = i;
-			tmpConf = conf[i];
+			tmpConf = confidence[i];
 		}
 	}
 	if (!(tmpConf > threshold))
@@ -174,37 +127,94 @@ void patternMatch::getTwoTop(int first, int second, float threshold){
 	tmpConf = -1;
 
 	//Find 2nd item
-	for (int i = 0; i < 6; i++){
-		if (tmpConf < conf[i])
+	for (int i = 0; i < CLASSNUM; i++){
+		if (tmpConf < confidence[i])
 			if (idx != i) {
 				idx2 = i;
-				tmpConf = conf[i];
+				tmpConf = confidence[i];
 			}
 	}
 	if (!(tmpConf > threshold))
 		second = idx2;
 	else second = -1;
-	
-	delete[] conf;
 }
+
+void patternMatch::getThreeTop(int &first, int &second, int &third, float threshold) {
+
+	int idx = -1;
+	int idx2 = -1;
+	int idx3 = -1;
+	float tmpConf = -1;
+
+	//Get predicted confidence
+	//this->getPredicted(conf);
+
+	//Find maximum item
+	for (int i = 0; i < CLASSNUM; i++) {
+		if (tmpConf < confidence[i]) {
+			idx = i;
+			tmpConf = confidence[i];
+		}
+	}
+	if ((tmpConf > threshold))
+		first = idx;
+	else first = -1;
+	tmpConf = -1;
+
+	//Find 2nd item
+	for (int i = 0; i < CLASSNUM; i++) {
+		if (tmpConf < confidence[i]) {
+			if (idx != i) {
+				idx2 = i;
+				tmpConf = confidence[i];
+			}
+		}
+	}
+	if ((tmpConf > threshold))
+		second = idx2;
+	else second = -1;
+	tmpConf = -1;
+	//Find 3rd item
+	for (int i = 0; i < CLASSNUM; i++) {
+		if (tmpConf < confidence[i]) {
+			if (idx != i && idx2 != i) {
+				idx3 = i;
+				tmpConf = confidence[i];
+			}
+		}
+	}
+	if ((tmpConf > threshold))
+		third = idx3;
+	else third = -1;
+}
+
+bool patternMatch::isValid(int idx, float threshold) {
+	bool ret = false;
+	
+	ret = (confidence[idx] > threshold);
+	
+	return ret;
+}
+
 void patternMatch::getImageFromParam(Mat& img){
     Mat canvas = Mat(Size(400, 400), CV_8UC3);
 	canvas = Scalar(255, 255, 255);
-	for (vector<Point2d>::iterator it = pointVec.begin();
-		it != pointVec.end()-1;
+	for (vector<Point2d>::iterator it = pointVec->begin();
+		it != pointVec->end()-1;
 		it++) {
 		line(canvas, *(it), *(it + 1), Scalar(0),
 			int(((maxPoint.x - minPoint.x) / 30 + (maxPoint.y - minPoint.y) / 30) / 2) + 1);
 	}
     
     img = canvas(Rect(minPoint, maxPoint));
-    free(canvas);
+    //delete canvas;
+
 }
 
-void patternMatch::getPredicted(float* confs){
+void patternMatch::getPredicted(string method, float* confs){
     Mat tmp;
     Mat prob;
-	this.getImageFromParam(tmp);
+	this->getImageFromParam(tmp);
         
 
     if (tmp.empty())
@@ -212,24 +222,37 @@ void patternMatch::getPredicted(float* confs){
         std::cerr << "Can't read image" << std::endl;
         exit(-1);
     }
-    //Image prep.
-    Mat inputBlob = blobFromImage(tmp, 1.0f, Size(IMGSIZE, IMGSIZE),
-        0, false);
-    
-    
-    //CV_TRACE_REGION("forward");
-    //Set the network input
-    this.net.setInput(inputBlob, "data");        
-
-    //Compute output using CNN
-    prob = this.net.forward(OUTLAYER);                          
+	
+	if (method.compare("CNN") == 0) {
+		//Image prep.
+		Mat inputBlob = blobFromImage(tmp, 1.0f, Size(IMGSIZE, IMGSIZE),
+			0, false);
 
 
-    //cout << prob;
-    for (int i = 0; i < 6; i++)
-        confs[i] = ((float*)prob.data)[i];
-    
-    free(tmp);
-    free(prob);
+		//CV_TRACE_REGION("forward");
+		//Set the network input
+		this->net->setInput(inputBlob, "data");
+
+		//Compute output using CNN
+		prob = this->net->forward(OUTLAYER);
+	}
+
+
+
+
+	//GET CONFIDENCES
+	if (prob.empty()) {
+		std::cerr << "Can't use method: " << method << std::endl;
+		exit(-1);
+	}
+	else {
+		//cout << prob;
+		for (int i = 0; i < CLASSNUM; i++)
+			this->confidence[i] = ((float*)prob.data)[i];
+
+		if (confs != NULL)
+			for (int i = 0; i < CLASSNUM; i++)
+				confs[i] = ((float*)prob.data)[i];
+	}
 }
 
