@@ -35,12 +35,9 @@ add_library( # Sets the name of the library.
              src/main/cpp/HSVFilter.h
              src/main/cpp/HSVFilter.cpp
             #Pattern mat
-             src/main/cpp/patternMatch/useDNN.cpp
-             src/main/cpp/patternMatch/patternMatch.cpp
-             src/main/cpp/patternMatch/patternMatchAlgo.cpp
-             src/main/cpp/patternMatch/useDNN.h
-             src/main/cpp/patternMatch/patternMatch.h
-             src/main/cpp/patternMatch/patternMatchAlgo.h
+             src/main/cpp/patternMatch/patternMatchClass.h
+             src/main/cpp/patternMatch/patternMatchClass.cpp
+
              )
 
 

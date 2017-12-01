@@ -29,13 +29,13 @@ private:
     //void initNN(String modelBin, String modelTxt, Net& net);
     //void forwardNN(Net& net, String outLayer, Mat image, Size size, Scalar mean, Mat& prob);
 
-	float* confidence;
+	float* confidence = NULL;
     int preT;
     float preVelo;
     float preAngle;
     float angleD;
     Point2d prePoint, minPoint, maxPoint;
-    vector<Point2d>* pointVec = NULL;
+
 
 public:
 
@@ -50,9 +50,11 @@ public:
 	void getPredicted(string method, float* confs);
 	void getTwoTop(int first, int second, float threshold);
 	void getThreeTop(int &first, int &second, int &third, float threshold);
-	void getImageFromParam(Mat& img);
+	void getImageFromParam(Mat* img);
 	bool isValid(int idx, float threshold);
+	int getPointNum();
 	Net* net = NULL;
+	vector<Point2d>* pointVec = NULL;
 };
 
 //Initialize canvas & parame

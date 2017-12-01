@@ -300,12 +300,16 @@ public class Dash extends Application {
 
 
     ///////////pattern/////////
+    public native void initPatternMatch();
     public native void initParam2Img(int time);
-    public native void initPatternNN(String path);
+    public native void initNN(String path);
     public native void updateParam2Img(int time, float v, float a);
-    public native void getImageFromParam(long input);
     public native void getPredicted(String predAlgorithm, float[] confs);
     public native boolean isValidPattern(int idx, float threshold);
+    public native void isTop3(int idx, float threshold);
+    public native void getImageFromParam(long input);
+    public native int getPointNum();
+
     //public native void getImageFromParam(Mat img);
 
 

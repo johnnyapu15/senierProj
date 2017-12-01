@@ -196,25 +196,26 @@ bool patternMatch::isValid(int idx, float threshold) {
 	return ret;
 }
 
-void patternMatch::getImageFromParam(Mat& img){
-    Mat canvas = Mat(Size(400, 400), CV_8UC3);
-	canvas = Scalar(255, 255, 255);
-	for (vector<Point2d>::iterator it = pointVec->begin();
-		it != pointVec->end()-1;
-		it++) {
-		line(canvas, *(it), *(it + 1), Scalar(0),
-			int(((maxPoint.x - minPoint.x) / 30 + (maxPoint.y - minPoint.y) / 30) / 2) + 1);
+void patternMatch::getImageFromParam(Mat* img){
+	if (&img != NULL) {
+		Mat canvas = Mat(Size(400, 400), CV_8UC3);
+		canvas = Scalar(255, 255, 255);
+		for (vector<Point2d>::iterator it = pointVec->begin();
+			 it != pointVec->end() - 1;
+			 it++) {
+			line(canvas, *(it), *(it + 1), Scalar(0),
+				 int(((maxPoint.x - minPoint.x) / 30 + (maxPoint.y - minPoint.y) / 30) / 2) + 1);
+		}
+        canvas(Rect(minPoint, maxPoint)).copyTo(*img);
+		//delete canvas;
 	}
-    
-    img = canvas(Rect(minPoint, maxPoint));
-    //delete canvas;
 
 }
 
 void patternMatch::getPredicted(string method, float* confs){
     Mat tmp;
     Mat prob;
-	this->getImageFromParam(tmp);
+	this->getImageFromParam(&tmp);
         
 
     if (tmp.empty())
@@ -254,5 +255,10 @@ void patternMatch::getPredicted(string method, float* confs){
 			for (int i = 0; i < CLASSNUM; i++)
 				confs[i] = ((float*)prob.data)[i];
 	}
+
+}
+
+int patternMatch::getPointNum(){
+	return this->pointVec->size();
 }
 
