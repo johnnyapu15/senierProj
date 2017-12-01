@@ -7,6 +7,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -33,7 +35,7 @@ public class TutorialActivity extends AppCompatActivity
     Dash d;
 
     private CameraBridgeViewBase mOpenCvCameraView;
-    ImageButton back, next, exit;
+    ImageButton back, next, exit, refresh;
 
     private int start_flag = 0;
     private double start_x, start_y, end_x, end_y;
@@ -41,12 +43,11 @@ public class TutorialActivity extends AppCompatActivity
     private float rel_x, rel_y;
 
     Timer timer = new Timer();
-
     private boolean isPV = false;
     private boolean isIA = false;
     private long startTime = 0;
     private long STAGETIME = 3000;
-
+    private int currentStage = 1;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -68,57 +69,63 @@ public class TutorialActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
 
-        d = (Dash) getApplicationContext();
-        back = (ImageButton) findViewById(R.id.backButtont);
-        next = (ImageButton) findViewById(R.id.nextButtont);
-        exit = (ImageButton) findViewById(R.id.exitButtont);
+        d = (Dash)getApplicationContext();
+        back = (ImageButton)findViewById(R.id.backButtont);
+        next = (ImageButton)findViewById(R.id.nextButtont);
+        exit = (ImageButton)findViewById(R.id.exitButtont);
+        refresh = (ImageButton)findViewById(R.id.refreshButtont);
 
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.activity_surface_view);
+        mOpenCvCameraView = (CameraBridgeViewBase)findViewById(R.id.activity_surface_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setCameraIndex(1); // front-camera(1),  back-camera(0)
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
-
+        initTut(currentStage);
         timer.schedule(new TimerTask() {
             public void run() {
-                Log.d("send", "delta : " + deltaX + ", " + deltaY);
+                Log.d("send", "del,ta : "+deltaX+", "+deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
 
+                //Tutorial codes
+                if (currentStage >= 5){
+
+                }
+                else {
+                    if (checkTut(currentStage)) {
+                        //RIGHT ANSWER
+                        //Toast.makeText(getApplicationContext(), "맞았어요! 다음 단계로 넘어갑니다.", Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        //WRONG ANSWER
+                        //NO ACTION.
+                    }
+                }
+
             }
-        }, 0, 300);
+        }, 0, 300 );
 
 
         // 이미지 로딩
+
+
+
+
 
 
         //int a = (int)System.currentTimeMillis();
         //float[] conf = null;
 
 
-        ////Start new pattern, init current canvas.
+
+
+
+
+
         //d.initParam2Img(a, this.getFilesDir().getPath() + "/resDir/");
 
-
-        ////When control dash
-        //if(isCanvas){
-        //  d.updateParam2Img((int)System.currentTimeMillis(), deltaY, deltaX );
-        //}
+        //d.updateParam2Img(a + 5, 20, 30 );
         //d.updateParam2Img(a + 10, 10, -40 );
-
-
-        ////Compare pattern with current stage's
-        //if (d.isVaildPattern(currentStagePatternIndex, PATTERN_THRESHOLD)){
-        //  GO TO NEXT STAGE
-        //}
-        //else{
-        //  RESUME
-        //}
-
-        ////Reset canvas
-        //d.initParam2Img((int)System.currentTimeMillis());
-
-        ////
         //d.getPredicted("CNN", conf);
     }
 
@@ -144,6 +151,7 @@ public class TutorialActivity extends AppCompatActivity
 
     public void onDestroy() {
         if (mOpenCvCameraView != null) mOpenCvCameraView.disableView();
+        timer.cancel();
         super.onDestroy();
     }
 
@@ -248,11 +256,13 @@ public class TutorialActivity extends AppCompatActivity
                 }
             }).start();
         }
+
+
+
         return d.matInput;
     }
 
     public void exitButtontClicked(View v) {
-        timer.cancel();
         this.finish();
     }
 
@@ -265,7 +275,6 @@ public class TutorialActivity extends AppCompatActivity
         // 다음 이미지 로딩
 
     }
-
     public boolean checkTut(int stage) {
         //Stage 1: 직진 2: 후진 3: 왼쪽 4: 오른쪽
         boolean ret = false;
@@ -275,39 +284,50 @@ public class TutorialActivity extends AppCompatActivity
             switch (stage) {
                 case 1:
                     //직진
-                    isIA &= (deltaX < 10);
+                    isIA &= (-20 < deltaX && deltaX < 20);
                     ret = isPV & isIA;
                     break;
                 case 2:
                     //후진
-                    isIA &= (deltaX < 10);
+                    isIA &= (-20 < deltaX && deltaX < 20);
                     ret = !isPV & isIA;
                     break;
                 case 3:
                     //좌회전
-                    isIA &= (deltaX < -30);
+                    isIA &= (deltaX > 30);
                     ret = isPV & isIA;
                     break;
                 case 4:
                     //우회전
-                    isIA &= (deltaX > 30);
+                    isIA &= (deltaX < -30);
                     ret = isPV & isIA;
                     break;
             }
-            boolean isOver = STAGETIME < startTime - System.currentTimeMillis();
+            boolean isOver = STAGETIME < System.currentTimeMillis() - startTime;
+            Log.d("TUTORIAL",String.valueOf(isOver) +" " + String.valueOf(ret) + " " + currentStage);
             if (isOver & ret) {
-                //타임오버, 맞음
+                Log.d("TUTORIAL","GO TO NEXT STAGE");
+                //타임오버, 맞음 -> 다음 스테이지로
                 ret = true;
-                initTut(stage + 1);
+                if (currentStage < 4) {
+                    currentStage += 1;
+                    initTut(stage + 1);
+                }
+                else{
+
+                }
             } else if (!isOver & ret) {
-                //중간에 옳게 진행 중
+                Log.d("TUTORIAL","ING... 2");
+                //중간에 옳게 진행 중 -> 일단 진행
                 ret = false;
             } else if (isOver & !ret) {
-                //타임오버, 틀림
+                Log.d("TUTORIAL","WRONG / RESTART");
+                //타임오버, 틀림 -> 틀림 / 재시작
                 ret = false;
                 initTut(stage);
             } else if (!isOver & !ret) {
-                //중간에 틀림
+                Log.d("TUTORIAL","WRONG / RESTART 4");
+                //중간에 틀림 -> 현재 스테이지 재시작
                 ret = false;
                 initTut(stage);
             }
