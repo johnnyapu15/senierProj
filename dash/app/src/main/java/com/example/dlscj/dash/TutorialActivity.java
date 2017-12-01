@@ -42,6 +42,10 @@ public class TutorialActivity extends AppCompatActivity
 
     Timer timer = new Timer();
 
+    private boolean isPV = false;
+    private boolean isIA = false;
+    private long startTime = 0;
+    private long STAGETIME = 3000;
 
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -260,5 +264,73 @@ public class TutorialActivity extends AppCompatActivity
     public void nextButtontClicked(View v) {
         // 다음 이미지 로딩
 
+    }
+
+    public boolean checkTut(int stage) {
+        //Stage 1: 직진 2: 후진 3: 왼쪽 4: 오른쪽
+        boolean ret = false;
+        if (startTime != 0) {
+
+            isPV &= (deltaY > 0);
+            switch (stage) {
+                case 1:
+                    //직진
+                    isIA &= (deltaX < 10);
+                    ret = isPV & isIA;
+                    break;
+                case 2:
+                    //후진
+                    isIA &= (deltaX < 10);
+                    ret = !isPV & isIA;
+                    break;
+                case 3:
+                    //좌회전
+                    isIA &= (deltaX < -30);
+                    ret = isPV & isIA;
+                    break;
+                case 4:
+                    //우회전
+                    isIA &= (deltaX > 30);
+                    ret = isPV & isIA;
+                    break;
+            }
+            boolean isOver = STAGETIME < startTime - System.currentTimeMillis();
+            if (isOver & ret) {
+                //타임오버, 맞음
+                ret = true;
+                initTut(stage + 1);
+            } else if (!isOver & ret) {
+                //중간에 옳게 진행 중
+                ret = false;
+            } else if (isOver & !ret) {
+                //타임오버, 틀림
+                ret = false;
+                initTut(stage);
+            } else if (!isOver & !ret) {
+                //중간에 틀림
+                ret = false;
+                initTut(stage);
+            }
+        }
+        return ret;
+    }
+
+    public void initTut(int stage){
+        startTime = System.currentTimeMillis();
+        switch (stage){
+            case 1:
+                isPV = true;
+                break;
+            case 2:
+                isPV = false;
+                break;
+            case 3:
+                isPV = true;
+                break;
+            case 4:
+                isPV = true;
+                break;
+        }
+        isIA = true;
     }
 }
