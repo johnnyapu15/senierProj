@@ -179,30 +179,31 @@ public class InitActivity extends AppCompatActivity
         Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
         Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
 
+
+        //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+
+
+        //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+
+        //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+
+        //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+
         //TODO : 적절한 delay값 입력해야함
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 d.OutputSound(mp2, msg2);
             }
-        },8000);
-
-        //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
-
-
-        //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
-
-        //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
-
-        //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+        },25000);
 
         //editor.putInt(getString(R.string.init), new_init);
         //editor.commit();
