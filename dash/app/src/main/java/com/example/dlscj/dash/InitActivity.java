@@ -174,7 +174,7 @@ public class InitActivity extends AppCompatActivity
 
         Toast.makeText(getApplicationContext(), "초록색 원 정중앙에 물체를 올리고 원을 따라가주세요. ", Toast.LENGTH_SHORT).show();
 
-        OutputSound(mp1, msg1);
+       d.OutputSound(mp1, msg1);
         Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
         Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
         Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
@@ -183,7 +183,7 @@ public class InitActivity extends AppCompatActivity
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                OutputSound(mp2, msg2);
+                d.OutputSound(mp2, msg2);
             }
         },8000);
 
@@ -212,18 +212,5 @@ public class InitActivity extends AppCompatActivity
         //finish();
     }
 
-    protected void OutputSound(MediaPlayer mp, String sound)
-    {
-        if(mp != null) {
-            mp.reset();
-            mp.release();}
-        if(sound == msg1)
-            mp = MediaPlayer.create(this, R.raw.msg1);
-        else if(sound == msg2)
-            mp = MediaPlayer.create(this, R.raw.msg2);
-        else if(sound == msg3)
-            mp = MediaPlayer.create(this, R.raw.msg2);
-        mp.start();
 
-    }
 }

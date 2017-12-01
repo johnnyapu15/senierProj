@@ -30,4 +30,9 @@
     <string name="free">Free mode</string>
     <string name="game">Game mode</string>
     <string name="init"></string>
+
+    <string name="msg1">msg1</string>
+    <string name="msg2">msg2</string>
+    <string name="msg3">msg3</string>
+
 </resources>

@@ -2,6 +2,7 @@ package com.example.dlscj.dash;
 
 import android.app.Application;
 
+import android.media.MediaPlayer;
 import android.view.Display;
 import android.graphics.Point;
 
@@ -315,5 +316,19 @@ public class Dash extends Application {
         return ((x >= location[0] && x <= realRight) && (y >= location[1] && y <= realBottom));
     }
 
+    protected void OutputSound(MediaPlayer mp, String sound)
+    {
+        if(mp != null) {
+            mp.reset();
+            mp.release();
+        }
+        if(sound == "msg1")
+            mp = MediaPlayer.create(this, R.raw.msg1);
+        else if(sound == "msg2")
+            mp = MediaPlayer.create(this, R.raw.msg2);
+        else if(sound == "msg3")
+            mp = MediaPlayer.create(this, R.raw.msg2);
+        mp.start();
 
+    }
 }
