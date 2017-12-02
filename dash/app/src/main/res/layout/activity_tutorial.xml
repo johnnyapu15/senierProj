@@ -14,47 +14,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@+id/activity_surface_view"
-        app:layout_constraintTop_toTopOf="@+id/activity_surface_view"
-        app:srcCompat="@drawable/note" />
 
-    <ImageButton
-        android:id="@+id/backButtont"
-        style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="backButtontClicked"
-        android:scaleType="centerInside"
+    <ImageView
+        android:id="@+id/note"
+        android:layout_width="340sp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="24dp"
+        android:alpha="50"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/activity_surface_view"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@android:drawable/ic_media_previous" />
-
-    <ImageButton
-        android:id="@+id/nextButtont"
-        style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="nextButtontClicked"
-        android:scaleType="centerInside"
-        app:layout_constraintStart_toStartOf="@+id/activity_surface_view"
-        app:layout_constraintTop_toTopOf="@+id/activity_surface_view"
-        app:srcCompat="@android:drawable/ic_media_next" />
+        app:srcCompat="@drawable/note" />
 
     <ImageButton
         android:id="@+id/exitButtont"
         style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="65sp"
+        android:layout_height="65sp"
         android:onClick="exitButtontClicked"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="@+id/activity_surface_view"
         app:layout_constraintEnd_toEndOf="@+id/activity_surface_view"
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+
+    <ImageButton
+        android:id="@+id/nextButtont"
+        style="@android:style/Widget.Holo.ImageButton"
+        android:layout_width="70sp"
+        android:layout_height="70sp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="nextButtontClicked"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_surface_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/activity_surface_view"
+        app:layout_constraintTop_toTopOf="@+id/activity_surface_view"
+        app:srcCompat="@android:drawable/ic_media_next" />
+
+    <ImageView
+        android:id="@+id/tvimg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
