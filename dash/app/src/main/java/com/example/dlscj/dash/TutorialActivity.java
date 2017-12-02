@@ -1,5 +1,7 @@
 package com.example.dlscj.dash;
 
+import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,6 +11,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -33,9 +37,11 @@ public class TutorialActivity extends AppCompatActivity
         implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     Dash d;
-
     private CameraBridgeViewBase mOpenCvCameraView;
-    ImageButton back, next, exit, refresh;
+    ImageButton next, exit;
+    ImageView t, note;
+    GlideDrawableImageViewTarget imgt;
+
 
     private int start_flag = 0;
     private double start_x, start_y, end_x, end_y;
@@ -45,6 +51,8 @@ public class TutorialActivity extends AppCompatActivity
     Timer timer = new Timer();
     private boolean isPV = false;
     private boolean isIA = false;
+    private boolean isOK = false;
+    private boolean stageNext = false;
     private long startTime = 0;
     private long STAGETIME = 3000;
     private int currentStage = 1;
@@ -70,7 +78,6 @@ public class TutorialActivity extends AppCompatActivity
         setContentView(R.layout.activity_tutorial);
 
         d = (Dash)getApplicationContext();
-        back = (ImageButton)findViewById(R.id.backButtont);
         next = (ImageButton)findViewById(R.id.nextButtont);
         exit = (ImageButton)findViewById(R.id.exitButtont);
         refresh = (ImageButton)findViewById(R.id.refreshButtont);
@@ -81,7 +88,23 @@ public class TutorialActivity extends AppCompatActivity
         mOpenCvCameraView.setCameraIndex(1); // front-camera(1),  back-camera(0)
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
+
+        note = (ImageView)findViewById(R.id.note);
+        note.setImageAlpha(70);
+        t = (ImageView)findViewById(R.id.tvimg);
+        imgt = new GlideDrawableImageViewTarget(t);
+        t.setVisibility(View.INVISIBLE);
+
         initTut(currentStage);
+        d.sleepHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                t.setVisibility(View.VISIBLE);
+                set_gif();
+            }
+        }, 1000);
+
+
         timer.schedule(new TimerTask() {
             public void run() {
                 Log.d("send", "del,ta : "+deltaX+", "+deltaY);
@@ -89,12 +112,42 @@ public class TutorialActivity extends AppCompatActivity
 
                 //Tutorial codes
                 if (currentStage >= 5){
-
-                }
-                else {
-                    if (checkTut(currentStage)) {
+                    finish();
+                } else {
+                    if (isOK && checkTut(currentStage)) {
                         //RIGHT ANSWER
-                        //Toast.makeText(getApplicationContext(), "맞았어요! 다음 단계로 넘어갑니다.", Toast.LENGTH_SHORT).show();
+                        isOK = false;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "맞았어요! 다음 단계로 넘어갑니다.", Toast.LENGTH_SHORT).show();
+                                        d.sleepHandler.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                next.setVisibility(View.VISIBLE);
+                                                exit.setVisibility(View.VISIBLE);
+                                                note.setVisibility(View.VISIBLE);
+                                                t.setVisibility(View.VISIBLE);
+                                                set_gif();
+                                            }
+                                        }, 2000);
+                                    }
+                                });
+                            }
+                        }).start();
+                    } else if (isOK && !checkTut(currentStage)) {
+                        d.sleepHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                next.setVisibility(View.INVISIBLE);
+                                exit.setVisibility(View.INVISIBLE);
+                                note.setVisibility(View.INVISIBLE);
+                                t.setVisibility(View.INVISIBLE);
+                            }
+                        }, 1000);
 
                     } else {
                         //WRONG ANSWER
@@ -105,28 +158,6 @@ public class TutorialActivity extends AppCompatActivity
             }
         }, 0, 300 );
 
-
-        // 이미지 로딩
-
-
-
-
-
-
-        //int a = (int)System.currentTimeMillis();
-        //float[] conf = null;
-
-
-
-
-
-
-
-        //d.initParam2Img(a, this.getFilesDir().getPath() + "/resDir/");
-
-        //d.updateParam2Img(a + 5, 20, 30 );
-        //d.updateParam2Img(a + 10, 10, -40 );
-        //d.getPredicted("CNN", conf);
     }
 
 
@@ -205,7 +236,6 @@ public class TutorialActivity extends AppCompatActivity
 
 
                 if(d.isTouchInside(exit, (int)rel_x, (int)rel_y)) exitButtontClicked(exit);
-                else if(d.isTouchInside(back, (int)rel_x, (int)rel_y)) backButtontClicked(back);
                 else if(d.isTouchInside(next, (int)rel_x, (int)rel_y)) nextButtontClicked(next);
             }
             end_x = d.rsltarr[0] + d.rsltarr[2] / 2;
@@ -230,7 +260,6 @@ public class TutorialActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            back.setVisibility(View.INVISIBLE);
                             next.setVisibility(View.INVISIBLE);
                             exit.setVisibility(View.INVISIBLE);
                         }
@@ -248,7 +277,6 @@ public class TutorialActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            back.setVisibility(View.VISIBLE);
                             next.setVisibility(View.VISIBLE);
                             exit.setVisibility(View.VISIBLE);
                         }
@@ -266,14 +294,113 @@ public class TutorialActivity extends AppCompatActivity
         this.finish();
     }
 
-    public void backButtontClicked(View v) {
-        // 전 이미지 로딩
-
+    public void nextButtontClicked(View v) {
+        invs_img();
+        isOK = true;
     }
 
-    public void nextButtontClicked(View v) {
-        // 다음 이미지 로딩
+    public boolean checkTut(int stage) {
+        //Stage 1: 직진 2: 후진 3: 왼쪽 4: 오른쪽
+        boolean ret = false;
+        if (startTime != 0) {
 
+            isPV &= (deltaY > 0);
+            switch (stage) {
+                case 1:
+                    //직진
+                    isIA &= (-20 < deltaX && deltaX < 20);
+                    ret = isPV & isIA;
+                    break;
+                case 2:
+                    //후진
+                    isIA &= (-20 < deltaX && deltaX < 20);
+                    ret = !isPV & isIA;
+                    break;
+                case 3:
+                    //좌회전
+                    isIA &= (deltaX > 30);
+                    ret = isPV & isIA;
+                    break;
+                case 4:
+                    //우회전
+                    isIA &= (deltaX < -30);
+                    ret = isPV & isIA;
+                    break;
+            }
+            boolean isOver = STAGETIME < System.currentTimeMillis() - startTime;
+            Log.d("TUTORIAL",String.valueOf(isOver) +" " + String.valueOf(ret) + " " + currentStage);
+            if (isOver & ret) {
+                Log.d("TUTORIAL","GO TO NEXT STAGE");
+                //타임오버, 맞음 -> 다음 스테이지로
+                ret = true;
+                if (currentStage < 4) {
+                    currentStage += 1;
+                    initTut(stage + 1);
+                }
+                else{
+
+                }
+            } else if (!isOver & ret) {
+                Log.d("TUTORIAL","ING... 2");
+                //중간에 옳게 진행 중 -> 일단 진행
+                ret = false;
+            } else if (isOver & !ret) {
+                Log.d("TUTORIAL","WRONG / RESTART");
+                //타임오버, 틀림 -> 틀림 / 재시작
+                ret = false;
+                initTut(stage);
+            } else if (!isOver & !ret) {
+                Log.d("TUTORIAL","WRONG / RESTART 4");
+                //중간에 틀림 -> 현재 스테이지 재시작
+                ret = false;
+                initTut(stage);
+            }
+        }
+        return ret;
+    }
+
+    public void initTut(int stage){
+        startTime = System.currentTimeMillis();
+        switch (stage){
+            case 1:
+                isPV = true;
+                break;
+            case 2:
+                isPV = false;
+                break;
+            case 3:
+                isPV = true;
+                break;
+            case 4:
+                isPV = true;
+                break;
+        }
+        isIA = true;
+    }
+
+    public void invs_img() {
+        t.setVisibility(View.INVISIBLE);
+    }
+
+    public void set_gif() {
+        switch(currentStage) {
+            case 1:
+                t.setImageResource(R.drawable.tu1);
+                Glide.with(this).load(R.drawable.tu1).into(imgt);
+                break;
+            case 2:
+                t.setImageResource(R.drawable.tu2);
+                Glide.with(this).load(R.drawable.tu2).into(imgt);
+                break;
+            case 3:
+                t.setImageResource(R.drawable.tu3);
+                Glide.with(this).load(R.drawable.tu3).into(imgt);
+                break;
+            case 4:
+                t.setImageResource(R.drawable.tu4);
+                Glide.with(this).load(R.drawable.tu4).into(imgt);
+                break;
+        }
     }
     public boolean checkTut(int stage) {
         //Stage 1: 직진 2: 후진 3: 왼쪽 4: 오른쪽
