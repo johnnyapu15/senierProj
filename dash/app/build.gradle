@@ -37,4 +37,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation project(':openCVLibrary331')
     implementation project(':dashcontrol-release')
+    compile 'com.github.bumptech.glide:glide:4.3.1'
 }
