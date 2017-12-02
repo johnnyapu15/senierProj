@@ -61,14 +61,14 @@ public class TutorialActivity extends AppCompatActivity
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
+                case LoaderCallbackInterface.SUCCESS: {
                     mOpenCvCameraView.enableView();
-                } break;
-                default:
-                {
+                }
+                break;
+                default: {
                     super.onManagerConnected(status);
-                } break;
+                }
+                break;
             }
         }
     };
@@ -77,21 +77,20 @@ public class TutorialActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
 
-        d = (Dash)getApplicationContext();
-        next = (ImageButton)findViewById(R.id.nextButtont);
-        exit = (ImageButton)findViewById(R.id.exitButtont);
-        refresh = (ImageButton)findViewById(R.id.refreshButtont);
+        d = (Dash) getApplicationContext();
+        next = (ImageButton) findViewById(R.id.nextButtont);
+        exit = (ImageButton) findViewById(R.id.exitButtont);
 
-        mOpenCvCameraView = (CameraBridgeViewBase)findViewById(R.id.activity_surface_view);
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.activity_surface_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setCameraIndex(1); // front-camera(1),  back-camera(0)
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
 
-        note = (ImageView)findViewById(R.id.note);
+        note = (ImageView) findViewById(R.id.note);
         note.setImageAlpha(70);
-        t = (ImageView)findViewById(R.id.tvimg);
+        t = (ImageView) findViewById(R.id.tvimg);
         imgt = new GlideDrawableImageViewTarget(t);
         t.setVisibility(View.INVISIBLE);
 
@@ -107,11 +106,11 @@ public class TutorialActivity extends AppCompatActivity
 
         timer.schedule(new TimerTask() {
             public void run() {
-                Log.d("send", "del,ta : "+deltaX+", "+deltaY);
+                Log.d("send", "del,ta : " + deltaX + ", " + deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
 
                 //Tutorial codes
-                if (currentStage >= 5){
+                if (currentStage >= 5) {
                     finish();
                 } else {
                     if (isOK && checkTut(currentStage)) {
@@ -132,6 +131,7 @@ public class TutorialActivity extends AppCompatActivity
                                                 note.setVisibility(View.VISIBLE);
                                                 t.setVisibility(View.VISIBLE);
                                                 set_gif();
+                                                start_flag = 0;
                                             }
                                         }, 2000);
                                     }
@@ -156,7 +156,7 @@ public class TutorialActivity extends AppCompatActivity
                 }
 
             }
-        }, 0, 300 );
+        }, 0, 300);
 
     }
 
@@ -196,8 +196,8 @@ public class TutorialActivity extends AppCompatActivity
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-            int x = (int)(event.getX() * d.matInput.cols() / d.d_size.x);
-            int y = (int)(event.getY() * d.matInput.rows() / d.d_size.y);
+            int x = (int) (event.getX() * d.matInput.cols() / d.d_size.x);
+            int y = (int) (event.getY() * d.matInput.rows() / d.d_size.y);
 
             d.TouchCallback(x, y);
 
@@ -222,25 +222,25 @@ public class TutorialActivity extends AppCompatActivity
 
         d.matInput = inputFrame.rgba();
 
-        if(d.HSVFilter(d.matInput.getNativeObjAddr(), d.matInput.getNativeObjAddr(), d.rsltarr)) {
+        if (d.HSVFilter(d.matInput.getNativeObjAddr(), d.matInput.getNativeObjAddr(), d.rsltarr)) {
             //버튼 투명하게!, 초깃값 설정
-            if(start_flag == 0) {
+            if (start_flag == 0) {
                 start_x = d.rsltarr[0] + d.rsltarr[2] / 2;
                 start_y = d.rsltarr[1] + d.rsltarr[3] / 2;
                 start_flag = 1;
-                Log.d(TAG, "start : "+start_x+", "+start_y);
+                Log.d(TAG, "start : " + start_x + ", " + start_y);
 
 
-                rel_x = (float)start_x * d.d_size.x / d.matInput.cols();
-                rel_y = (float)start_y * d.d_size.y / d.matInput.rows();
+                rel_x = (float) start_x * d.d_size.x / d.matInput.cols();
+                rel_y = (float) start_y * d.d_size.y / d.matInput.rows();
 
 
-                if(d.isTouchInside(exit, (int)rel_x, (int)rel_y)) exitButtontClicked(exit);
-                else if(d.isTouchInside(next, (int)rel_x, (int)rel_y)) nextButtontClicked(next);
+                if (d.isTouchInside(exit, (int) rel_x, (int) rel_y)) exitButtontClicked(exit);
+                else if (d.isTouchInside(next, (int) rel_x, (int) rel_y)) nextButtontClicked(next);
             }
             end_x = d.rsltarr[0] + d.rsltarr[2] / 2;
             end_y = d.rsltarr[1] + d.rsltarr[3] / 2;
-            Log.d(d.TAG, "end : "+end_x+", "+end_y);
+            Log.d(d.TAG, "end : " + end_x + ", " + end_y);
 
             deltaX = start_x - end_x;
             deltaY = start_y - end_y;
@@ -248,8 +248,8 @@ public class TutorialActivity extends AppCompatActivity
             deltaX /= 5;
             deltaY /= 10;
 
-            if((deltaX > 0 && deltaX <= 3) || (deltaX <= 0 && deltaX >= -3)) deltaX = 0;
-            if((deltaY > 0 && deltaY <= 3) || (deltaY <= 0 && deltaY >= -3)) deltaY = 0;
+            if ((deltaX > 0 && deltaX <= 3) || (deltaX <= 0 && deltaX >= -3)) deltaX = 0;
+            if ((deltaY > 0 && deltaY <= 3) || (deltaY <= 0 && deltaY >= -3)) deltaY = 0;
 
 
             d.LineS2E(d.matInput.getNativeObjAddr(), d.matInput.getNativeObjAddr(), start_x, start_y, end_x, end_y);
@@ -286,7 +286,6 @@ public class TutorialActivity extends AppCompatActivity
         }
 
 
-
         return d.matInput;
     }
 
@@ -304,53 +303,56 @@ public class TutorialActivity extends AppCompatActivity
         boolean ret = false;
         if (startTime != 0) {
 
-            isPV &= (deltaY > 0);
+
             switch (stage) {
                 case 1:
                     //직진
+                    isPV &= (deltaY > 5);
                     isIA &= (-20 < deltaX && deltaX < 20);
-                    ret = isPV & isIA;
+                    ret = isPV && isIA;
                     break;
                 case 2:
                     //후진
+                    isPV &= (deltaY < -5);
                     isIA &= (-20 < deltaX && deltaX < 20);
-                    ret = !isPV & isIA;
+                    ret = isPV && isIA;
                     break;
                 case 3:
                     //좌회전
+                    isPV &= (deltaY > 5);
                     isIA &= (deltaX > 30);
-                    ret = isPV & isIA;
+                    ret = isPV && isIA;
                     break;
                 case 4:
                     //우회전
+                    isPV &= (deltaY > 5);
                     isIA &= (deltaX < -30);
-                    ret = isPV & isIA;
+                    ret = isPV && isIA;
                     break;
             }
             boolean isOver = STAGETIME < System.currentTimeMillis() - startTime;
-            Log.d("TUTORIAL",String.valueOf(isOver) +" " + String.valueOf(ret) + " " + currentStage);
+            Log.d("TUTORIAL", "isOver?: " + String.valueOf(isOver) + " isRight?: " + String.valueOf(ret) + " Current stage: " + currentStage);
             if (isOver & ret) {
-                Log.d("TUTORIAL","GO TO NEXT STAGE");
+                Log.d("TUTORIAL", "GO TO NEXT STAGE");
                 //타임오버, 맞음 -> 다음 스테이지로
                 ret = true;
-                if (currentStage < 4) {
+                //if (currentStage < 4) {
                     currentStage += 1;
                     initTut(stage + 1);
-                }
-                else{
+                //} else {
 
-                }
+                //}
             } else if (!isOver & ret) {
-                Log.d("TUTORIAL","ING... 2");
+                Log.d("TUTORIAL", "ING...");
                 //중간에 옳게 진행 중 -> 일단 진행
                 ret = false;
             } else if (isOver & !ret) {
-                Log.d("TUTORIAL","WRONG / RESTART");
+                Log.d("TUTORIAL", "WRONG / RESTART");
                 //타임오버, 틀림 -> 틀림 / 재시작
                 ret = false;
                 initTut(stage);
             } else if (!isOver & !ret) {
-                Log.d("TUTORIAL","WRONG / RESTART 4");
+                Log.d("TUTORIAL", "WRONG / RESTART");
                 //중간에 틀림 -> 현재 스테이지 재시작
                 ret = false;
                 initTut(stage);
@@ -359,31 +361,19 @@ public class TutorialActivity extends AppCompatActivity
         return ret;
     }
 
-    public void initTut(int stage){
+    public void initTut(int stage) {
         startTime = System.currentTimeMillis();
-        switch (stage){
-            case 1:
-                isPV = true;
-                break;
-            case 2:
-                isPV = false;
-                break;
-            case 3:
-                isPV = true;
-                break;
-            case 4:
-                isPV = true;
-                break;
-        }
+        isPV = true;
         isIA = true;
     }
 
     public void invs_img() {
         t.setVisibility(View.INVISIBLE);
+        initTut(currentStage);
     }
 
     public void set_gif() {
-        switch(currentStage) {
+        switch (currentStage) {
             case 1:
                 t.setImageResource(R.drawable.tu1);
                 Glide.with(this).load(R.drawable.tu1).into(imgt);
@@ -401,83 +391,5 @@ public class TutorialActivity extends AppCompatActivity
                 Glide.with(this).load(R.drawable.tu4).into(imgt);
                 break;
         }
-    }
-    public boolean checkTut(int stage) {
-        //Stage 1: 직진 2: 후진 3: 왼쪽 4: 오른쪽
-        boolean ret = false;
-        if (startTime != 0) {
-
-            isPV &= (deltaY > 0);
-            switch (stage) {
-                case 1:
-                    //직진
-                    isIA &= (-20 < deltaX && deltaX < 20);
-                    ret = isPV & isIA;
-                    break;
-                case 2:
-                    //후진
-                    isIA &= (-20 < deltaX && deltaX < 20);
-                    ret = !isPV & isIA;
-                    break;
-                case 3:
-                    //좌회전
-                    isIA &= (deltaX > 30);
-                    ret = isPV & isIA;
-                    break;
-                case 4:
-                    //우회전
-                    isIA &= (deltaX < -30);
-                    ret = isPV & isIA;
-                    break;
-            }
-            boolean isOver = STAGETIME < System.currentTimeMillis() - startTime;
-            Log.d("TUTORIAL",String.valueOf(isOver) +" " + String.valueOf(ret) + " " + currentStage);
-            if (isOver & ret) {
-                Log.d("TUTORIAL","GO TO NEXT STAGE");
-                //타임오버, 맞음 -> 다음 스테이지로
-                ret = true;
-                if (currentStage < 4) {
-                    currentStage += 1;
-                    initTut(stage + 1);
-                }
-                else{
-
-                }
-            } else if (!isOver & ret) {
-                Log.d("TUTORIAL","ING... 2");
-                //중간에 옳게 진행 중 -> 일단 진행
-                ret = false;
-            } else if (isOver & !ret) {
-                Log.d("TUTORIAL","WRONG / RESTART");
-                //타임오버, 틀림 -> 틀림 / 재시작
-                ret = false;
-                initTut(stage);
-            } else if (!isOver & !ret) {
-                Log.d("TUTORIAL","WRONG / RESTART 4");
-                //중간에 틀림 -> 현재 스테이지 재시작
-                ret = false;
-                initTut(stage);
-            }
-        }
-        return ret;
-    }
-
-    public void initTut(int stage){
-        startTime = System.currentTimeMillis();
-        switch (stage){
-            case 1:
-                isPV = true;
-                break;
-            case 2:
-                isPV = false;
-                break;
-            case 3:
-                isPV = true;
-                break;
-            case 4:
-                isPV = true;
-                break;
-        }
-        isIA = true;
     }
 }
