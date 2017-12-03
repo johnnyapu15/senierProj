@@ -50,7 +50,7 @@ public:
 	void getPredicted(string method, float* confs);
 	void getTwoTop(int first, int second, float threshold);
 	void getThreeTop(int &first, int &second, int &third, float threshold);
-	void getImageFromParam(Mat* img);
+	void getImageFromParam(Mat& img, bool isFullSize);
 	bool isValid(int idx, float threshold);
 	int getPointNum();
 	Net* net = NULL;

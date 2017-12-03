@@ -76,7 +76,6 @@ Java_com_example_dlscj_dash_Dash_getPredicted(JNIEnv *env, jobject instance, jst
         pm->getPredicted(metStr, tmpConfs);
         (*env).SetFloatArrayRegion(confidences, 0, 6, tmpConfs);
         free(tmpConfs);
-        free(&tmpChar);
     }
 }
 
@@ -113,9 +112,8 @@ Java_com_example_dlscj_dash_Dash_isTop3(JNIEnv *env, jobject instance, jint idx,
 JNIEXPORT jboolean JNICALL
 Java_com_example_dlscj_dash_Dash_getImageFromParam(JNIEnv *env, jobject instance, jlong inputMat){
     if (pm != NULL) {
-        Mat* test = new Mat(400, 400, CV_8UC3);
-        pm->getImageFromParam(test);
-        test->copyTo(*(Mat*)inputMat);
+        Mat m;
+        pm->getImageFromParam(m, 1);
     }
 }
 

@@ -43,6 +43,8 @@ import android.util.Log;
 
 import org.opencv.core.Mat;
 
+import static org.opencv.core.CvType.CV_8UC3;
+
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -52,7 +54,8 @@ public class SplashActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA = 101;
     private static final int REQUEST_READ_FILE = 102;
     private static final int REQUEST_WRITE_FILE = 103;
-
+///////////////////////////////
+    public Mat m = new Mat( 400, 400, CV_8UC3);
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,11 +73,11 @@ public class SplashActivity extends AppCompatActivity {
             CopyIfNotExist(R.raw.patternm, localPath + "/pattern.caffemodel");
             CopyIfNotExist(R.raw.patternt, localPath + "/pattern.prototxt");
 
-            /* TEST
+            ///* TEST
             int a = (int)System.currentTimeMillis();
             int test = 0;
             float[] conf = new float[6];
-            Mat m = new Mat( 400, 400, 0);
+
             d.initPatternMatch();
             d.initNN(localPath);
             d.initParam2Img(a);
@@ -88,7 +91,7 @@ public class SplashActivity extends AppCompatActivity {
             d.isValidPattern(1, 0);
             Log.d("confidence : ", conf.toString());
 
-            */
+            //*/
         }
         catch (IOException e){
             e.printStackTrace();
