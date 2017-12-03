@@ -57,7 +57,7 @@ void HSVFilter::SelectColor(int x, int y){
     //Calculate bounds
     hl = (h - lower_h >= 0) ? h - lower_h : 0;
     sl = (s - lower_s >= 0) ? s - lower_s : 0;
-    vl = (v - lower_v >= 0) ? h - lower_v : 0;
+    vl = (v - lower_v >= 0) ? v - lower_v : 0;
     LOGD("lbound : %d %d %d", hl, sl, vl);
 
     hh = ((h + high_h) >= 180) ? 180 : h + high_h;
@@ -106,6 +106,20 @@ bool HSVFilter::DrawObj_JNI(Rect& bb, JNIEnv* env, jdoubleArray& bbarr){
     }
     return false;
 }
+
+void HSVFilter::SetRange(JNIEnv *env, jobject instance, jintArray min, jintArray max){
+    jint *min_buf, *max_buf;
+    min_buf = env->GetIntArrayElements(min, NULL);
+    max_buf = env->GetIntArrayElements(max, NULL);
+    if(env->GetArrayLength(min) != 3) LOGD("error in Set Range, parameter min");
+    if(env->GetArrayLength(max) != 3) LOGD("error in Set Range, parameter max");
+    for(int i = 0; i<3; i++)
+        min_scalar[i] = min_buf[i];
+    for(int i = 0; i<3; i++)
+        max_scalar[i] = max_buf[i];
+    clicked = true;
+}
+
 jboolean HSVFilter::FindObj_JNI(JNIEnv *env, jobject instance,
 					jlong matAddrInput, jlong matAddrResult,
 					jdoubleArray bbarr){

@@ -28,6 +28,56 @@ Java_com_example_dlscj_dash_Dash_HSVFilter(JNIEnv *env, jobject instance,
 }
 
 JNIEXPORT void JNICALL
+Java_com_example_dlscj_dash_Dash_SetRange(JNIEnv *env, jobject instance, jintArray min, jintArray max){
+    filter.SetRange(env, instance, min, max);
+}
+
+JNIEXPORT void JNICALL
+Java_com_example_dlscj_dash_Dash_GetMin(JNIEnv *env, jobject instance, jintArray min){
+    int len;
+    len = env->GetArrayLength(min);
+    jint* bb_buf = (jint *) malloc(sizeof(jint) * len);
+
+
+    int* buf = filter.GetMinScalar();
+    if(buf == NULL){
+        bb_buf[0] = 0;
+        bb_buf[1] = 0;
+        bb_buf[2] = 0;
+    }
+    else{
+        bb_buf[0] = buf[0];
+        bb_buf[1] = buf[1];
+        bb_buf[2] = buf[2];
+    }
+    env->SetIntArrayRegion(min, 0, len, bb_buf);
+    free(bb_buf);
+}
+
+JNIEXPORT void JNICALL
+Java_com_example_dlscj_dash_Dash_GetMax(JNIEnv *env, jobject instance, jintArray max){
+    int len;
+    len = env->GetArrayLength(max);
+    jint* bb_buf = (jint *) malloc(sizeof(jint) * len);
+
+
+    int* buf = filter.GetMaxScalar();
+    if(buf == NULL){
+        bb_buf[0] = 0;
+        bb_buf[1] = 0;
+        bb_buf[2] = 0;
+    }
+    else{
+        bb_buf[0] = buf[0];
+        bb_buf[1] = buf[1];
+        bb_buf[2] = buf[2];
+    }
+    env->SetIntArrayRegion(max, 0, len, bb_buf);
+    free(bb_buf);
+}
+
+
+JNIEXPORT void JNICALL
 Java_com_example_dlscj_dash_Dash_LineS2E(JNIEnv *env, jobject instance,
                                          jlong matAddrInput,
                                          jlong matAddrResult,

@@ -68,4 +68,7 @@ public:
 	jboolean FindObj_JNI(JNIEnv *env, jobject instance,
 						jlong matAddrInput, jlong matAddrResult,
 						jdoubleArray bbarr);
+	void SetRange(JNIEnv *env, jobject instance, jintArray min, jintArray max);
+	int* GetMinScalar(){if(clicked) return min_scalar; else return NULL;}
+	int* GetMaxScalar(){if(clicked) return max_scalar; else return NULL;}
 };

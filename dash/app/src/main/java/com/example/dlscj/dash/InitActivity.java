@@ -156,6 +156,15 @@ public class InitActivity extends AppCompatActivity
                                                 d.sleepHandler.postDelayed(new Runnable() {
                                                                                @Override
                                                                                public void run() {
+                                                                                   int[] min = new int[3];
+                                                                                   int[] max = new int[3];
+                                                                                   d.GetMin(min);
+                                                                                   d.GetMax(max);
+                                                                                   try {
+                                                                                       d.SaveRange("range.txt", min, max);
+                                                                                   }catch(IOException e){
+                                                                                       e.printStackTrace();
+                                                                                   }
                                                                                    Intent intent = new Intent(InitActivity.this, MainActivity.class);
                                                                                    startActivity(intent);
                                                                                    InitActivity.this.finish();

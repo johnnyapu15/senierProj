@@ -39,6 +39,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.UUID;
 import android.util.Log;
 
@@ -295,6 +302,11 @@ public class Dash extends Application {
 
     public native boolean HSVFilter(long in, long out, double[] array);
 
+    public native void SetRange(int[] min, int[] max);
+
+    public native void GetMin(int[] min);
+    public native void GetMax(int[] min);
+
     public native void TouchCallback(int x, int y);
 
     public native void LineS2E(long in, long out, double start_x, double start_y, double end_x, double end_y);
@@ -303,7 +315,7 @@ public class Dash extends Application {
     ///////////pattern/////////
     public native void initParam2Img(int time, String path);
     public native void updateParam2Img(int time, float v, float a);
-    public native void getImageFromParam(long input);
+    //public native void getImageFromParam(long input);
     public native void getPredicted(String predAlgorithm, float[] confs);
     //public native void getImageFromParam(Mat img);
 
@@ -329,6 +341,54 @@ public class Dash extends Application {
         else if(sound == "msg3")
             mp = MediaPlayer.create(this, R.raw.msg2);
         mp.start();
+    }
 
+    public void LoadRange(String path)throws IOException{
+        FileInputStream ios = openFileInput(path);
+        int[] min = new int[3];
+        int[] max = new int[3];
+        byte[] tmp = new byte[Integer.SIZE/8];
+        for(int i = 0; i<3; i++) {
+           ios.read(tmp);
+             min[i] = byteArrayToInt(tmp);
+         }
+          for(int i = 0; i<3; i++) {
+              ios.read(tmp);
+               max[i] = byteArrayToInt(tmp);
+          }
+         SetRange(min, max);
+         ios.close();
+    }
+
+    public void SaveRange(String path, int[] min, int[] max)throws IOException{
+        FileOutputStream fos = openFileOutput(path, Context.MODE_PRIVATE);
+        for(int i = 0; i<3; i++)
+            fos.write(intToByteArray(min[i]));
+        for(int i = 0; i<3; i++)
+            fos.write(intToByteArray(max[i]));
+        fos.close();
+    }
+
+    private static byte[] intToByteArray(final int integer){
+        ByteBuffer buff = ByteBuffer.allocate(Integer.SIZE/8);
+        buff.putInt(integer);
+        buff.order(ByteOrder.BIG_ENDIAN);
+        return buff.array();
+    }
+
+    private static int byteArrayToInt(byte[] bytes){
+        final int size = Integer.SIZE/8;
+        ByteBuffer buff = ByteBuffer.allocate(size);
+        final byte[] newBytes = new byte[size];
+        for (int i = 0; i < size; i++){
+            if(i + bytes.length < size){
+                newBytes[i] = (byte) 0x00;
+            }else{
+                newBytes[i] = bytes[i + bytes.length - size];
+            }
+        }
+        buff = ByteBuffer.wrap(newBytes);
+        buff.order(ByteOrder.BIG_ENDIAN);
+        return buff.getInt();
     }
 }

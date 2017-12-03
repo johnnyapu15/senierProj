@@ -215,6 +215,11 @@ public class SplashActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    d.LoadRange("range.txt");
+                                }catch(IOException e){
+                                    e.printStackTrace();
+                                }
                                 dialog.dismiss();
                                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                                 SplashActivity.this.finish();
@@ -224,4 +229,5 @@ public class SplashActivity extends AppCompatActivity {
         alertDialog.show();
         //if(alertDialog.isShowing()) alertDialog.dismiss();
     }
+
 }
