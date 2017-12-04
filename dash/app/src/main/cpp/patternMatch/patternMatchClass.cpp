@@ -21,7 +21,7 @@ patternMatch::~patternMatch() {
 }
 
 //Initialize canvas & parameters
-void patternMatch::initParam2Img(int time){
+void patternMatch::initParam2Img(long time){
 	if (confidence != NULL) delete confidence;
 	confidence = new float[CLASSNUM];
     if (pointVec != NULL) delete pointVec;
@@ -64,7 +64,7 @@ void patternMatch::initPatternNN(string path){
 //Draw line from previous-point to present-point.
 //Decide the present point with interval from previous function call and paramater v, a.
 //the time-input-value is on second/10.
-void patternMatch::updateParam2Img(int time, float v, float a){
+void patternMatch::updateParam2Img(long time, float v, float a){
     if (pointVec == NULL) {
         std::cerr << "Initialize values first." << std::endl;
         exit(-1);

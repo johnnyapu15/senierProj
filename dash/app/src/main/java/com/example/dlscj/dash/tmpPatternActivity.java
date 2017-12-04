@@ -33,7 +33,7 @@ import static dashcontrol.utils.Debug.TAG;
 
 
 
-public class TutorialActivity extends AppCompatActivity
+public class tmpPatternActivity extends AppCompatActivity
         implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     Dash d;

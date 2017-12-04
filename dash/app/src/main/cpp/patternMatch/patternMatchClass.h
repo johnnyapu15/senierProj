@@ -28,9 +28,9 @@ private:
     //(In the legacy code: useDNN)
     //void initNN(String modelBin, String modelTxt, Net& net);
     //void forwardNN(Net& net, String outLayer, Mat image, Size size, Scalar mean, Mat& prob);
-	String[6] classes = {"CIRCLE", "N", "L", "RECT", "RS", "S", "INTERMEDIATE"};
+	//String[6] classes = {"CIRCLE", "N", "L", "RECT", "RS", "S", "INTERMEDIATE"};
 	float* confidence = NULL;
-    int preT;
+    long preT;
     float preVelo;
     float preAngle;
     float angleD;
@@ -44,9 +44,9 @@ public:
 
 	//(In the legacy code: patternMatch)
 	//Functions of initiation and update paramter, getting predicted are used within JNI.
-	void initParam2Img(int time);
+	void initParam2Img(long time);
 	void initPatternNN(string path);
-	void updateParam2Img(int time, float v, float a);
+	void updateParam2Img(long time, float v, float a);
 	void getPredicted(string method, float* confs);
 	void getTwoTop(int first, int second, float threshold);
 	void getThreeTop(int &first, int &second, int &third, float threshold);

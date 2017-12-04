@@ -33,7 +33,7 @@ import static dashcontrol.utils.Debug.TAG;
 
 
 
-public class TutorialActivity extends AppCompatActivity
+public class PatternActivity extends AppCompatActivity
         implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     Dash d;
@@ -55,7 +55,7 @@ public class TutorialActivity extends AppCompatActivity
     private long DETECTION_INTERVAL = 2000;
     private int currentStage = 1;
     private int FINAL_STAGE = 5;
-    private int[] stagePatternIdx = [3,2,1];
+    private int[] stagePatternIdx = {3,2,1};
     private double PATTERN_THRESHOLD = 1500;
     private float[] confidence = new float[6];
 
@@ -78,7 +78,7 @@ public class TutorialActivity extends AppCompatActivity
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tutorial);
+        setContentView(R.layout.activity_pattern);
 
         d = (Dash) getApplicationContext();
         next = (ImageButton) findViewById(R.id.nextButtont);
@@ -113,7 +113,7 @@ public class TutorialActivity extends AppCompatActivity
             public void run() {
                 Log.d("send", "del,ta : " + deltaX + ", " + deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
-                d.updateParam2Img(System.currentTimeMillis(), deltaY, deltaX);
+                d.updateParam2Img(System.currentTimeMillis(), (float)deltaY, (float)deltaX);
                 //Pattern codes
                 if (currentStage > FINAL_STAGE) {
                     finish();
@@ -125,7 +125,7 @@ public class TutorialActivity extends AppCompatActivity
                         //            false-> Process as is & DETECTIONSTART = System.currentTimeMillis();
                         if (isOK) {
                             d.getPredicted("CNN", confidence);
-                            if (d.isValidPattern(stagePatternIdx[currentStage], PATTERN_THRESHOLD)) {
+                            if (d.isValidPattern(stagePatternIdx[currentStage], (float)PATTERN_THRESHOLD)) {
                                 //RIGHT ANSWER
                                 isOK = false;
                                 new Thread(new Runnable() {

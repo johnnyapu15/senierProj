@@ -53,15 +53,15 @@ Java_com_example_dlscj_dash_Dash_initPatternMatch(JNIEnv *env, jobject instance)
 }
 
 JNIEXPORT void JNICALL
-Java_com_example_dlscj_dash_Dash_initParam2Img(JNIEnv *env,jobject instance, jint time){
+Java_com_example_dlscj_dash_Dash_initParam2Img(JNIEnv *env,jobject instance, jlong time){
     if (pm != NULL)
-        pm->initParam2Img((int)time);
+        pm->initParam2Img(time);
 }
 
 JNIEXPORT void JNICALL
-Java_com_example_dlscj_dash_Dash_updateParam2Img(JNIEnv *env, jobject instance, jint time, jfloat velo, jfloat angle){
+Java_com_example_dlscj_dash_Dash_updateParam2Img(JNIEnv *env, jobject instance, jlong time, jfloat velo, jfloat angle){
     if (pm != NULL)
-        pm->updateParam2Img((int)time, (float)velo, (float)angle);
+        pm->updateParam2Img(time, (float)velo, (float)angle);
 }
 
 JNIEXPORT void JNICALL
