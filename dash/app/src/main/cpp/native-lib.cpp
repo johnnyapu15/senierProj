@@ -80,8 +80,8 @@ Java_com_example_dlscj_dash_Dash_getPredicted(JNIEnv *env, jobject instance, jst
 }
 
 //It uses index of classes for pattern validation. ex) CIRCLE -> 0, N -> 1 ...
-//CLASSES : {"CIRCLE", "N", "L", "RECT", "RS", "S"};
-//               0      1    2     3      4     5
+//CLASSES : {"CIRCLE", "N", "L", "RECT", "RS", "S", "INTERMEDIATE"};
+//               0      1    2     3      4     5          6
 JNIEXPORT jboolean JNICALL
 Java_com_example_dlscj_dash_Dash_isValidPattern(JNIEnv *env, jobject instance, jint idx, jfloat threshold){
     if (pm != NULL) {

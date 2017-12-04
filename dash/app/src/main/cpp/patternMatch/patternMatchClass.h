@@ -28,7 +28,7 @@ private:
     //(In the legacy code: useDNN)
     //void initNN(String modelBin, String modelTxt, Net& net);
     //void forwardNN(Net& net, String outLayer, Mat image, Size size, Scalar mean, Mat& prob);
-	String[6] classes = {"CIRCLE", "N", "L", "RECT", "RS", "S"};
+	String[6] classes = {"CIRCLE", "N", "L", "RECT", "RS", "S", "INTERMEDIATE"};
 	float* confidence = NULL;
     int preT;
     float preVelo;

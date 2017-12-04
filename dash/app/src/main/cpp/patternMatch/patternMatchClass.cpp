@@ -5,7 +5,7 @@
 #define TIMEVALUE 0.1	//The time dimension is on sec/10.
 #define DEG2RAD 0.0174533
 #define MARGIN 7
-#define CLASSNUM 6
+#define CLASSNUM 7
 
 patternMatch::patternMatch() {
 	//net = new Net();
