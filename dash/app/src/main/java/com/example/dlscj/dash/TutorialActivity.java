@@ -96,7 +96,7 @@ public class TutorialActivity extends AppCompatActivity
         imgt = new GlideDrawableImageViewTarget(t);
 
 
-        initTut(currentStage);
+        initTut();
         d.sleepHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -133,32 +133,12 @@ public class TutorialActivity extends AppCompatActivity
                                                 note.setVisibility(View.VISIBLE);
                                                 t.setVisibility(View.VISIBLE);
                                                 set_gif();
-                                                start_flag = 0;
                                             }
                                         }, 2000);
                                     }
                                 });
                             }
                         }).start();
-                    } else if (isOK && !checkTut(currentStage)) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        next.setVisibility(View.INVISIBLE);
-                                        exit.setVisibility(View.INVISIBLE);
-                                        note.setVisibility(View.INVISIBLE);
-                                        t.setVisibility(View.INVISIBLE);
-                                    }
-                                });
-                            }
-                        }).start();
-
-                    } else {
-                        //WRONG ANSWER
-                        //NO ACTION.
                     }
                 }
 
@@ -229,12 +209,30 @@ public class TutorialActivity extends AppCompatActivity
 
         d.matInput = inputFrame.rgba();
 
+        if(isOK == true) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            next.setVisibility(View.INVISIBLE);
+                            exit.setVisibility(View.INVISIBLE);
+                            note.setVisibility(View.INVISIBLE);
+                            t.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                }
+            }).start();
+        }
+
         if (d.HSVFilter(d.matInput.getNativeObjAddr(), d.matInput.getNativeObjAddr(), d.rsltarr)) {
             //버튼 투명하게!, 초깃값 설정
             if (start_flag == 0) {
                 start_x = d.rsltarr[0] + d.rsltarr[2] / 2;
                 start_y = d.rsltarr[1] + d.rsltarr[3] / 2;
-                start_flag = 1;
+                if(isOK == true)
+                    start_flag = 1;
                 Log.d(TAG, "start : " + start_x + ", " + start_y);
 
 
@@ -245,6 +243,8 @@ public class TutorialActivity extends AppCompatActivity
                 if (d.isTouchInside(exit, (int) rel_x, (int) rel_y)) exitButtontClicked(exit);
                 else if (d.isTouchInside(next, (int) rel_x, (int) rel_y)) nextButtontClicked(next);
             }
+            if(isOK == false)
+                start_flag = 0;
             end_x = d.rsltarr[0] + d.rsltarr[2] / 2;
             end_y = d.rsltarr[1] + d.rsltarr[3] / 2;
             Log.d(d.TAG, "end : " + end_x + ", " + end_y);
@@ -273,23 +273,27 @@ public class TutorialActivity extends AppCompatActivity
                     });
                 }
             }).start();
+
         } else {
             start_flag = 0;
             deltaX = 0;
             deltaY = 0;
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            next.setVisibility(View.VISIBLE);
-                            exit.setVisibility(View.VISIBLE);
-                        }
-                    });
-                }
-            }).start();
+            if(isOK == false) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                next.setVisibility(View.VISIBLE);
+                                exit.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+                }).start();
+            }
+
         }
 
 
@@ -301,7 +305,18 @@ public class TutorialActivity extends AppCompatActivity
     }
 
     public void nextButtontClicked(View v) {
-        invs_img();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        t.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        }).start();
+        initTut();
         isOK = true;
     }
 
@@ -345,7 +360,7 @@ public class TutorialActivity extends AppCompatActivity
                 ret = true;
                 //if (currentStage < 4) {
                     currentStage += 1;
-                    initTut(stage + 1);
+                    initTut();
                 //} else {
 
                 //}
@@ -357,26 +372,21 @@ public class TutorialActivity extends AppCompatActivity
                 Log.d("TUTORIAL", "WRONG / RESTART");
                 //타임오버, 틀림 -> 틀림 / 재시작
                 ret = false;
-                initTut(stage);
+                initTut();
             } else if (!isOver & !ret) {
                 Log.d("TUTORIAL", "WRONG / RESTART");
                 //중간에 틀림 -> 현재 스테이지 재시작
                 ret = false;
-                initTut(stage);
+                initTut();
             }
         }
         return ret;
     }
 
-    public void initTut(int stage) {
+    public void initTut() {
         startTime = System.currentTimeMillis();
         isPV = true;
         isIA = true;
-    }
-
-    public void invs_img() {
-        t.setVisibility(View.INVISIBLE);
-        initTut(currentStage);
     }
 
     public void set_gif() {

@@ -165,9 +165,26 @@ public class InitActivity extends AppCompatActivity
                                                                                    }catch(IOException e){
                                                                                        e.printStackTrace();
                                                                                    }
-                                                                                   Intent intent = new Intent(InitActivity.this, MainActivity.class);
-                                                                                   startActivity(intent);
-                                                                                   InitActivity.this.finish();
+                                                                                   d.sleepHandler.postDelayed(new Runnable() {
+                                                                                       @Override
+                                                                                       public void run() {
+                                                                                           new Thread(new Runnable() {
+                                                                                               @Override
+                                                                                               public void run() {
+                                                                                                   d.OutputSound(mp2, msg2);
+                                                                                               }
+                                                                                           }).start();
+                                                                                           d.sleepHandler.postDelayed(new Runnable() {
+                                                                                               @Override
+                                                                                               public void run() {
+                                                                                                   Intent intent = new Intent(InitActivity.this, MainActivity.class);
+                                                                                                   startActivity(intent);
+                                                                                                   InitActivity.this.finish();
+                                                                                               }
+                                                                                           }, 2000);
+                                                                                       }
+                                                                                   }, 2000);
+
                                                                                }
                                                                            }, 1000);
                                             }
@@ -207,12 +224,7 @@ public class InitActivity extends AppCompatActivity
         Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
 
         //TODO : 적절한 delay값 입력해야함
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                d.OutputSound(mp2, msg2);
-            }
-        },25000);
+
 
         //editor.putInt(getString(R.string.init), new_init);
         //editor.commit();

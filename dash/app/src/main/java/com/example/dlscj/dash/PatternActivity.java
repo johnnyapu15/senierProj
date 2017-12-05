@@ -49,7 +49,7 @@ public class PatternActivity extends AppCompatActivity
     private float rel_x, rel_y;
 
     Timer timer = new Timer();
-    private boolean isOK = false;
+    private boolean isNext = false;
     private boolean stageNext = false;
     private long DETECTION_START = 0;
     private long DETECTION_INTERVAL = 2000;
@@ -123,11 +123,11 @@ public class PatternActivity extends AppCompatActivity
                         //1. 패턴 인식으로 현재 스테이지와 맞는 지 불린값 체크
                         //2. 불린값이 true -> Next stage
                         //            false-> Process as is & DETECTIONSTART = System.currentTimeMillis();
-                        if (isOK) {
+                        if (isNext) {
                             d.getPredicted("CNN", confidence);
                             if (d.isValidPattern(stagePatternIdx[currentStage], (float)PATTERN_THRESHOLD)) {
                                 //RIGHT ANSWER
-                                isOK = false;
+                                isNext = false;
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -315,7 +315,7 @@ public class PatternActivity extends AppCompatActivity
 
     public void nextButtontClicked(View v) {
         invs_img();
-        isOK = true;
+        isNext = true;
     }
 
     public void invs_img() {
