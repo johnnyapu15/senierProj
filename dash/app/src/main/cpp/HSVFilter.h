@@ -53,7 +53,7 @@ private:
 	//opt variables
 	const int opt_num = 2;
 	int op_cnt = 0;
-	const int thres_diff = 200;
+	const int thres_diff = 2000;
 	bool before = false;
 	Rect before_bb;
 
