@@ -69,7 +69,7 @@ public class tmpPatternActivity extends AppCompatActivity
         */
     private int[] stagePatternIdx = {0, 2, 5, 4, 1, 3}; //usage: stagePatternIdx[currentStage] -> currentPattern
     private String[] stageStr = {"원", "기역", "S", "거꾸로 S", "N", "사각형"};
-    private float THRESHOLD = 5000;
+    private float THRESHOLD = 3000;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
