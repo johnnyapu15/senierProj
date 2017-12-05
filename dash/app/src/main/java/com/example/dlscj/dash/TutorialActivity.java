@@ -90,9 +90,11 @@ public class TutorialActivity extends AppCompatActivity
 
         note = (ImageView) findViewById(R.id.note);
         note.setImageAlpha(70);
+
         t = (ImageView) findViewById(R.id.tvimg);
-        imgt = new GlideDrawableImageViewTarget(t);
         t.setVisibility(View.INVISIBLE);
+        imgt = new GlideDrawableImageViewTarget(t);
+
 
         initTut(currentStage);
         d.sleepHandler.postDelayed(new Runnable() {
@@ -139,15 +141,20 @@ public class TutorialActivity extends AppCompatActivity
                             }
                         }).start();
                     } else if (isOK && !checkTut(currentStage)) {
-                        d.sleepHandler.postDelayed(new Runnable() {
+                        new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                next.setVisibility(View.INVISIBLE);
-                                exit.setVisibility(View.INVISIBLE);
-                                note.setVisibility(View.INVISIBLE);
-                                t.setVisibility(View.INVISIBLE);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        next.setVisibility(View.INVISIBLE);
+                                        exit.setVisibility(View.INVISIBLE);
+                                        note.setVisibility(View.INVISIBLE);
+                                        t.setVisibility(View.INVISIBLE);
+                                    }
+                                });
                             }
-                        }, 1000);
+                        }).start();
 
                     } else {
                         //WRONG ANSWER
