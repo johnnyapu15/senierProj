@@ -88,8 +88,8 @@ Java_com_example_dlscj_dash_Dash_LineS2E(JNIEnv *env, jobject instance,
     IplImage in_img(*(Mat *) matAddrInput);
     Mat &out_mat = *(Mat *) matAddrResult;
 
-    cvCircle(&in_img, CvPoint((int) s_x, (int) s_y), 10, CvScalar(0, 192, 214), 20);
-    cvCircle(&in_img, CvPoint((int) e_x, (int) e_y), 10, CvScalar(0, 192, 214), 20);
+    cvCircle(&in_img, CvPoint((int) s_x, (int) s_y), 10, CvScalar(0, 233, 255), 20);
+    cvCircle(&in_img, CvPoint((int) e_x, (int) e_y), 10, CvScalar(0, 233, 255), 20);
     cvLine(&in_img, CvPoint((int) s_x, (int) s_y), CvPoint((int) e_x, (int) e_y), CvScalar(0, 86, 102), 10);
     cvarrToMat(&in_img).copyTo(out_mat);
 }
