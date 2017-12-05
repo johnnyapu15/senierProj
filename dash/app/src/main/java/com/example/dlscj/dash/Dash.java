@@ -104,6 +104,9 @@ public class Dash extends Application {
     int rel_x, rel_y;
     int x, y;
 
+    //Route param
+    protected Mat routeMat;
+
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("opencv_java3");

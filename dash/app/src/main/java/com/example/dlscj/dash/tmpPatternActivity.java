@@ -320,8 +320,7 @@ public class tmpPatternActivity extends AppCompatActivity
     //d.initParam2Img(System.currentTimeMillis());
 
     //이미지를 띄울 위치에 추가할 코드
-    //Mat patternImage;
-    //d.getImgFromParam(patternImage);
+    //d.getImgFromParam(d.routeMat);
 
     public boolean checkPat(int stage) {
         /*
