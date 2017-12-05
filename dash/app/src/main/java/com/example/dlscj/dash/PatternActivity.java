@@ -33,7 +33,7 @@ import static dashcontrol.utils.Debug.TAG;
 
 
 
-public class TutorialActivity extends AppCompatActivity
+public class PatternActivity extends AppCompatActivity
         implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     Dash d;
@@ -49,13 +49,16 @@ public class TutorialActivity extends AppCompatActivity
     private float rel_x, rel_y;
 
     Timer timer = new Timer();
-    private boolean isPV = false;
-    private boolean isIA = false;
     private boolean isOK = false;
     private boolean stageNext = false;
-    private long startTime = 0;
-    private long STAGETIME = 3000;
+    private long DETECTION_START = 0;
+    private long DETECTION_INTERVAL = 2000;
     private int currentStage = 1;
+    private int FINAL_STAGE = 5;
+    private int[] stagePatternIdx = {3,2,1};
+    private double PATTERN_THRESHOLD = 1500;
+    private float[] confidence = new float[6];
+
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -75,7 +78,7 @@ public class TutorialActivity extends AppCompatActivity
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tutorial);
+        setContentView(R.layout.activity_pattern);
 
         d = (Dash) getApplicationContext();
         next = (ImageButton) findViewById(R.id.nextButtont);
@@ -93,8 +96,10 @@ public class TutorialActivity extends AppCompatActivity
         t = (ImageView) findViewById(R.id.tvimg);
         imgt = new GlideDrawableImageViewTarget(t);
         t.setVisibility(View.INVISIBLE);
+        d.initPatternMatch();
+        d.initNN(this.getFilesDir().getPath());
+        d.initParam2Img(System.currentTimeMillis());
 
-        initTut(currentStage);
         d.sleepHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -108,53 +113,59 @@ public class TutorialActivity extends AppCompatActivity
             public void run() {
                 Log.d("send", "del,ta : " + deltaX + ", " + deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
-
-                //Tutorial codes
-                if (currentStage >= 5) {
+                d.updateParam2Img(System.currentTimeMillis(), (float)deltaY, (float)deltaX);
+                //Pattern codes
+                if (currentStage > FINAL_STAGE) {
                     finish();
                 } else {
-                    if (isOK && checkTut(currentStage)) {
-                        //RIGHT ANSWER
-                        isOK = false;
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                runOnUiThread(new Runnable() {
+                    //JJA: 인식 취소가 적정 인터벌이상 지속된 경우, 패턴 인식을 진행한다.
+                    if (System.currentTimeMillis() - DETECTION_START > DETECTION_INTERVAL) {
+                        //1. 패턴 인식으로 현재 스테이지와 맞는 지 불린값 체크
+                        //2. 불린값이 true -> Next stage
+                        //            false-> Process as is & DETECTIONSTART = System.currentTimeMillis();
+                        if (isOK) {
+                            d.getPredicted("CNN", confidence);
+                            if (d.isValidPattern(stagePatternIdx[currentStage], (float)PATTERN_THRESHOLD)) {
+                                //RIGHT ANSWER
+                                isOK = false;
+                                new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(getApplicationContext(), "맞았어요! 다음 단계로 넘어갑니다.", Toast.LENGTH_SHORT).show();
-                                        d.sleepHandler.postDelayed(new Runnable() {
+                                        runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                next.setVisibility(View.VISIBLE);
-                                                exit.setVisibility(View.VISIBLE);
-                                                note.setVisibility(View.VISIBLE);
-                                                t.setVisibility(View.VISIBLE);
-                                                set_gif();
-                                                start_flag = 0;
+                                                Toast.makeText(getApplicationContext(), "맞았어요! 다음 단계로 넘어갑니다.", Toast.LENGTH_SHORT).show();
+                                                d.sleepHandler.postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        next.setVisibility(View.VISIBLE);
+                                                        exit.setVisibility(View.VISIBLE);
+                                                        note.setVisibility(View.VISIBLE);
+                                                        t.setVisibility(View.VISIBLE);
+                                                        set_gif();
+                                                        start_flag = 0;
+                                                    }
+                                                }, 2000);
                                             }
-                                        }, 2000);
+                                        });
                                     }
-                                });
+                                }).start();
+                            } else {
+                                //WRONG ANSWER
+                                DETECTION_START = System.currentTimeMillis();
+                                d.sleepHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        next.setVisibility(View.INVISIBLE);
+                                        exit.setVisibility(View.INVISIBLE);
+                                        note.setVisibility(View.INVISIBLE);
+                                        t.setVisibility(View.INVISIBLE);
+                                    }
+                                }, 1000);
                             }
-                        }).start();
-                    } else if (isOK && !checkTut(currentStage)) {
-                        d.sleepHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                next.setVisibility(View.INVISIBLE);
-                                exit.setVisibility(View.INVISIBLE);
-                                note.setVisibility(View.INVISIBLE);
-                                t.setVisibility(View.INVISIBLE);
-                            }
-                        }, 1000);
-
-                    } else {
-                        //WRONG ANSWER
-                        //NO ACTION.
+                        }
                     }
                 }
-
             }
         }, 0, 300);
 
@@ -267,10 +278,19 @@ public class TutorialActivity extends AppCompatActivity
                 }
             }).start();
         } else {
+            //JJA
+            //인식 취소가 시작되었을 때의 시간 기록
+            if (start_flag != 0)
+                DETECTION_START = System.currentTimeMillis();
+
+
             start_flag = 0;
             deltaX = 0;
             deltaY = 0;
 
+
+            //현재 간헐적으로 발생하는 뷰 종료->부적절한 쓰레드 오류 이슈를 이 부분에서 해결할 수 있을 것 같다.
+            //이때 생성한 쓰레드를 전역변수로 저장해서 해당 쓰레드를 기억한다면 해결 가능할 것.
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -298,78 +318,9 @@ public class TutorialActivity extends AppCompatActivity
         isOK = true;
     }
 
-    public boolean checkTut(int stage) {
-        //Stage 1: 직진 2: 후진 3: 왼쪽 4: 오른쪽
-        boolean ret = false;
-        if (startTime != 0) {
-
-
-            switch (stage) {
-                case 1:
-                    //직진
-                    isPV &= (deltaY > 5);
-                    isIA &= (-20 < deltaX && deltaX < 20);
-                    ret = isPV && isIA;
-                    break;
-                case 2:
-                    //후진
-                    isPV &= (deltaY < -5);
-                    isIA &= (-20 < deltaX && deltaX < 20);
-                    ret = isPV && isIA;
-                    break;
-                case 3:
-                    //좌회전
-                    isPV &= (deltaY > 5);
-                    isIA &= (deltaX > 30);
-                    ret = isPV && isIA;
-                    break;
-                case 4:
-                    //우회전
-                    isPV &= (deltaY > 5);
-                    isIA &= (deltaX < -30);
-                    ret = isPV && isIA;
-                    break;
-            }
-            boolean isOver = STAGETIME < System.currentTimeMillis() - startTime;
-            Log.d("TUTORIAL", "isOver?: " + String.valueOf(isOver) + " isRight?: " + String.valueOf(ret) + " Current stage: " + currentStage);
-            if (isOver & ret) {
-                Log.d("TUTORIAL", "GO TO NEXT STAGE");
-                //타임오버, 맞음 -> 다음 스테이지로
-                ret = true;
-                //if (currentStage < 4) {
-                    currentStage += 1;
-                    initTut(stage + 1);
-                //} else {
-
-                //}
-            } else if (!isOver & ret) {
-                Log.d("TUTORIAL", "ING...");
-                //중간에 옳게 진행 중 -> 일단 진행
-                ret = false;
-            } else if (isOver & !ret) {
-                Log.d("TUTORIAL", "WRONG / RESTART");
-                //타임오버, 틀림 -> 틀림 / 재시작
-                ret = false;
-                initTut(stage);
-            } else if (!isOver & !ret) {
-                Log.d("TUTORIAL", "WRONG / RESTART");
-                //중간에 틀림 -> 현재 스테이지 재시작
-                ret = false;
-                initTut(stage);
-            }
-        }
-        return ret;
-    }
-
-    public void initTut(int stage) {
-        startTime = System.currentTimeMillis();
-        isPV = true;
-        isIA = true;
-    }
-
     public void invs_img() {
         t.setVisibility(View.INVISIBLE);
-        initTut(currentStage);
+        d.initParam2Img(System.currentTimeMillis());
     }
 
     public void set_gif() {

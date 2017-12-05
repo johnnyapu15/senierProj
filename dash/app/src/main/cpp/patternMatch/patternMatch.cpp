@@ -8,19 +8,21 @@
 #define DEG2RAD 0.0174533
 #define MARGIN 7
 
-
+private String[6] classes = {"CIRCLE", "N", "L", "RECT", "RS", "S"};
 int preT;
 float preVelo;
 float preAngle;
 float angleD;
 Point2d prePoint;
 Point2d minPoint, maxPoint;
-vector<Point2d> pointVec;
+vector<Point2d> pointVec = NULL;
 
 
 
 //Functions of initiation and update paramter, getting predicted are used within JNI.
 void initParam2Img(int time) {
+	free(pointVec);
+	pointVec = new vector<Point2d>;
 	minPoint.x = 200 - MARGIN;
 	minPoint.y = 200 - MARGIN;
 	maxPoint.x = 200 + MARGIN;
@@ -32,6 +34,10 @@ void initParam2Img(int time) {
 	prePoint = Point2d(200, 200);
 	pointVec.push_back(prePoint);
 	//pointVec.push_back(prePoint);
+	
+}
+void initPatternNN(String path){
+	setParam(path + "/pattern.caffemodel", path + "/pattern.prototxt");
 	initPatternNN();
 }
 void updateParam2Img(int time, float v, float a) {
@@ -84,6 +90,45 @@ void getPredicted(String predAlgorithm, float* confs) {
 		forwardPatternNN(tmp, confs);
 	}
 
+}
+
+void getTwoTop(int first, int second, float threshold){
+	//20171129 Johnnyapu15
+	//get confidence using CNN-LeNet and calc two-top label.
+	
+	int idx = -1;
+	int idx2 = -1;
+	float tmpConf = -1;
+	float* conf = new float[];
+
+	//Get predicted confidence
+	getPredicted("CNN", conf);
+
+	//Find maximum item
+	for (int i = 0; i < 6; i++){
+		if (tmpConf < conf[i]) {
+			idx = i;
+			tmpConf = conf[i];
+		}
+	}
+	if (!(tmpConf > threshold))
+		first = idx;
+	else first = -1;
+	tmpConf = -1;
+
+	//Find 2nd item
+	for (int i = 0; i < 6; i++){
+		if (tmpConf < conf[i])
+			if (idx != i) {
+				idx2 = i;
+				tmpConf = conf[i];
+			}
+	}
+	if (!(tmpConf > threshold))
+		second = idx2;
+	else second = -1;
+	
+	delete conf;
 }
 
 void getImageFromParam(Mat& img) {

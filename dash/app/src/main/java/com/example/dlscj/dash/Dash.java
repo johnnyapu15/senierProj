@@ -102,7 +102,7 @@ public class Dash extends Application {
     protected static final long SCAN_PERIOD = 12 * 1000;
     protected Handler mRetryWaitingHandler;
     protected static final long RETRY_WAITING_PERIOD = 5 * 1000;
-
+    protected static final float PATTERN_THRESHOLD = (float) 0.7;
     PowerManager mPowerManager;
     PowerManager.WakeLock mWakeLock;
 
@@ -111,6 +111,9 @@ public class Dash extends Application {
 
     int rel_x, rel_y;
     int x, y;
+
+    //Route param
+    protected Mat routeMat;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -313,10 +316,16 @@ public class Dash extends Application {
 
 
     ///////////pattern/////////
-    public native void initParam2Img(int time, String path);
-    public native void updateParam2Img(int time, float v, float a);
-    //public native void getImageFromParam(long input);
+    public native void initPatternMatch();
+    public native void initParam2Img(long time);
+    public native void initNN(String path);
+    public native void updateParam2Img(long time, float v, float a);
     public native void getPredicted(String predAlgorithm, float[] confs);
+    public native boolean isValidPattern(int idx, float threshold);
+    public native void isTop3(int idx, float threshold);
+    public native void getImageFromParam(long input);
+    public native int getPointNum();
+
     //public native void getImageFromParam(Mat img);
 
 

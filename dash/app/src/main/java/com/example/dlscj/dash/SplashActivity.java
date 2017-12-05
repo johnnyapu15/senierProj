@@ -43,6 +43,8 @@ import android.util.Log;
 
 import org.opencv.core.Mat;
 
+import static org.opencv.core.CvType.CV_8UC3;
+
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -52,7 +54,8 @@ public class SplashActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA = 101;
     private static final int REQUEST_READ_FILE = 102;
     private static final int REQUEST_WRITE_FILE = 103;
-
+///////////////////////////////
+    public Mat m = new Mat( 400, 400, CV_8UC3);
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,14 +75,20 @@ public class SplashActivity extends AppCompatActivity {
 
             /* TEST
             int a = (int)System.currentTimeMillis();
+            int test = 0;
             float[] conf = new float[6];
-            Mat m = new Mat();
-            d.initParam2Img(a, localPath);
 
+            d.initPatternMatch();
+            d.initNN(localPath);
+            d.initParam2Img(a);
+            test = d.getPointNum();
             d.updateParam2Img(a + 5, 20, 30 );
+            test = d.getPointNum();
             d.updateParam2Img(a + 10, 10, -40 );
-            d.getImageFromParam(m.getNativeObjAddr());
+            test = d.getPointNum();
+            //d.getImageFromParam(m.getNativeObjAddr());
             d.getPredicted("CNN", conf);
+            d.isValidPattern(1, 0);
             Log.d("confidence : ", conf.toString());
 
             */

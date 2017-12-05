@@ -33,7 +33,7 @@ import static dashcontrol.utils.Debug.TAG;
 
 
 
-public class TutorialActivity extends AppCompatActivity
+public class tmpPatternActivity extends AppCompatActivity
         implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     Dash d;
@@ -54,8 +54,22 @@ public class TutorialActivity extends AppCompatActivity
     private boolean isOK = false;
     private boolean stageNext = false;
     private long startTime = 0;
-    private long STAGETIME = 3000;
+    private long STAGETIME = 500; //올바르게 패턴을 그린 후 .5초 후 진행
     private int currentStage = 1;
+    private int FINAL_STAGE = 6;
+        /* 
+        The CNN model trained: "CIRCLE"-0, "N"-1, "L"-2, "RECT"-3, "RS"-4, "S"-5, "INTERMEDIATE"-6
+        Pattern game:
+            Stage 1: CIRCLE
+            Stage 2: L
+            Stage 3: S
+            Stage 4: RS
+            Stage 5: N
+            Stage 6: RECTANGLE
+        */
+    private int[] stagePatternIdx = {0, 2, 5, 4, 1, 3}; //usage: stagePatternIdx[currentStage] -> currentPattern
+    private String[] stageStr = {"원", "기역", "S", "거꾸로 S", "N", "사각형"};
+    private float THRESHOLD = 1500;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -91,10 +105,14 @@ public class TutorialActivity extends AppCompatActivity
         note = (ImageView) findViewById(R.id.note);
         note.setImageAlpha(70);
         t = (ImageView) findViewById(R.id.tvimg);
+        
         imgt = new GlideDrawableImageViewTarget(t);
         t.setVisibility(View.INVISIBLE);
+        d.initPatternMatch();
+        d.initNN(this.getFilesDir().getPath());
+        d.initParam2Img(System.currentTimeMillis());
 
-        initTut(currentStage);
+        startTime = System.currentTimeMillis();
         d.sleepHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -106,14 +124,14 @@ public class TutorialActivity extends AppCompatActivity
 
         timer.schedule(new TimerTask() {
             public void run() {
-                Log.d("send", "del,ta : " + deltaX + ", " + deltaY);
+                Log.d("send", "delta : " + deltaX + ", " + deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
 
-                //Tutorial codes
-                if (currentStage >= 5) {
+                //Pattern-game codes
+                if (currentStage > FINAL_STAGE) {
                     finish();
                 } else {
-                    if (isOK && checkTut(currentStage)) {
+                    if (isOK && checkPat(currentStage)) {
                         //RIGHT ANSWER
                         isOK = false;
                         new Thread(new Runnable() {
@@ -138,7 +156,7 @@ public class TutorialActivity extends AppCompatActivity
                                 });
                             }
                         }).start();
-                    } else if (isOK && !checkTut(currentStage)) {
+                    } else if (isOK && !checkPat(currentStage)) {
                         d.sleepHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -298,78 +316,62 @@ public class TutorialActivity extends AppCompatActivity
         isOK = true;
     }
 
-    public boolean checkTut(int stage) {
-        //Stage 1: 직진 2: 후진 3: 왼쪽 4: 오른쪽
+    //새로고침 버튼에 추가할 코드
+    //d.initParam2Img(System.currentTimeMillis());
+
+    //이미지를 띄울 위치에 추가할 코드
+    //d.getImgFromParam(d.routeMat);
+
+    public boolean checkPat(int stage) {
+        /*
+        Stage 1: CIRCLE
+        Stage 2: L
+        Stage 3: S
+        Stage 4: RS
+        Stage 5: N
+        Stage 6: RECTANGLE
+        */
         boolean ret = false;
         if (startTime != 0) {
 
 
-            switch (stage) {
-                case 1:
-                    //직진
-                    isPV &= (deltaY > 5);
-                    isIA &= (-20 < deltaX && deltaX < 20);
-                    ret = isPV && isIA;
-                    break;
-                case 2:
-                    //후진
-                    isPV &= (deltaY < -5);
-                    isIA &= (-20 < deltaX && deltaX < 20);
-                    ret = isPV && isIA;
-                    break;
-                case 3:
-                    //좌회전
-                    isPV &= (deltaY > 5);
-                    isIA &= (deltaX > 30);
-                    ret = isPV && isIA;
-                    break;
-                case 4:
-                    //우회전
-                    isPV &= (deltaY > 5);
-                    isIA &= (deltaX < -30);
-                    ret = isPV && isIA;
-                    break;
-            }
-            boolean isOver = STAGETIME < System.currentTimeMillis() - startTime;
-            Log.d("TUTORIAL", "isOver?: " + String.valueOf(isOver) + " isRight?: " + String.valueOf(ret) + " Current stage: " + currentStage);
-            if (isOver & ret) {
-                Log.d("TUTORIAL", "GO TO NEXT STAGE");
+            ret = d.isValidPattern(stagePatternIdx[stage], THRESHOLD);
+
+            boolean atInterval = STAGETIME < System.currentTimeMillis() - startTime;
+            Log.d("PATTERN", "atInterval?: " + String.valueOf(atInterval) + " isRight?: " + String.valueOf(ret) + " Current stage: " + currentStage + ", " + stageStr[currentStage]);
+            if (atInterval & ret) {
+                Log.d("PATTERN", "GO TO NEXT STAGE");
                 //타임오버, 맞음 -> 다음 스테이지로
                 ret = true;
-                //if (currentStage < 4) {
-                    currentStage += 1;
-                    initTut(stage + 1);
-                //} else {
+                currentStage += 1;
+                startTime = System.currentTimeMillis();
 
-                //}
-            } else if (!isOver & ret) {
-                Log.d("TUTORIAL", "ING...");
+            } else if (!atInterval & ret) {
+                Log.d("PATTERN", "ING...");
                 //중간에 옳게 진행 중 -> 일단 진행
                 ret = false;
-            } else if (isOver & !ret) {
-                Log.d("TUTORIAL", "WRONG / RESTART");
+            } else if (atInterval & !ret) {
+                Log.d("PATTERN", "WRONG / RESTART");
                 //타임오버, 틀림 -> 틀림 / 재시작
                 ret = false;
-                initTut(stage);
-            } else if (!isOver & !ret) {
-                Log.d("TUTORIAL", "WRONG / RESTART");
+                startTime = System.currentTimeMillis();
+            } else if (!atInterval & !ret) {
+                Log.d("PATTERN", "WRONG / RESTART");
                 //중간에 틀림 -> 현재 스테이지 재시작
                 ret = false;
-                initTut(stage);
+                startTime = System.currentTimeMillis();
             }
         }
         return ret;
     }
 
-    public void initTut(int stage) {
-        startTime = System.currentTimeMillis();
-        isPV = true;
-        isIA = true;
+    public void initPat(int stage) {
+        d.initParam2Img(System.currentTimeMillis());
     }
 
     public void invs_img() {
         t.setVisibility(View.INVISIBLE);
-        initTut(currentStage);
+        startTime = System.currentTimeMillis();
     }
 
     public void set_gif() {
