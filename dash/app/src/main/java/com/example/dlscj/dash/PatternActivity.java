@@ -78,7 +78,7 @@ public class PatternActivity extends AppCompatActivity
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pattern);
+        setContentView(R.layout.activity_free);
 
         d = (Dash) getApplicationContext();
         next = (ImageButton) findViewById(R.id.nextButtont);

@@ -16,10 +16,9 @@
 
 
     <ImageView
-        android:id="@+id/note"
+        android:id="@+id/notep"
         android:layout_width="340sp"
         android:layout_height="match_parent"
-        android:layout_marginStart="24dp"
         android:alpha="50"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +27,7 @@
         app:srcCompat="@drawable/note" />
 
     <ImageButton
-        android:id="@+id/exitButtont"
+        android:id="@+id/exitButtonp"
         style="@android:style/Widget.Holo.ImageButton"
         android:layout_width="65sp"
         android:layout_height="65sp"
@@ -40,7 +39,7 @@
 
 
     <ImageButton
-        android:id="@+id/nextButtont"
+        android:id="@+id/nextButtonp"
         style="@android:style/Widget.Holo.ImageButton"
         android:layout_width="70sp"
         android:layout_height="70sp"
@@ -57,7 +56,7 @@
         app:srcCompat="@android:drawable/ic_media_next" />
 
     <ImageView
-        android:id="@+id/tvimg"
+        android:id="@+id/tvimgp"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

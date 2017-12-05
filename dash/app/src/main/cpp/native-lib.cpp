@@ -119,12 +119,12 @@ Java_com_example_dlscj_dash_Dash_getPredicted(JNIEnv *env, jobject instance, jst
     if (pm != NULL) {
         float* tmpConfs = NULL;
         if (confidences != NULL)
-            tmpConfs = new float[6];
+            tmpConfs = new float[7];
 
         const char *tmpChar = (*env).GetStringUTFChars(method, NULL);
         std::string metStr(tmpChar);
         pm->getPredicted(metStr, tmpConfs);
-        (*env).SetFloatArrayRegion(confidences, 0, 6, tmpConfs);
+        (*env).SetFloatArrayRegion(confidences, 0, 7, tmpConfs);
         free(tmpConfs);
     }
 }
@@ -136,6 +136,16 @@ JNIEXPORT jboolean JNICALL
 Java_com_example_dlscj_dash_Dash_isValidPattern(JNIEnv *env, jobject instance, jint idx, jfloat threshold){
     if (pm != NULL) {
         bool valid = pm->isValid(idx, threshold);
+        return valid;
+    }
+    return false;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_com_example_dlscj_dash_Dash_isTopPattern(JNIEnv *env, jobject instance, jint idx, jfloat threshold){
+    if (pm != NULL) {
+        bool valid = pm->isTop(idx);
+        valid = valid & pm->isValid(idx, threshold);
         return valid;
     }
     return false;

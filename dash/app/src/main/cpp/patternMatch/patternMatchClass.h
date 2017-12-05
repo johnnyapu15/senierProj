@@ -52,6 +52,7 @@ public:
 	void getThreeTop(int &first, int &second, int &third, float threshold);
 	void getImageFromParam(Mat& img, bool isFullSize);
 	bool isValid(int idx, float threshold);
+	bool isTop(int idx);
 	int getPointNum();
 	Net* net = NULL;
 	vector<Point2d>* pointVec = NULL;

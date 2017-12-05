@@ -22,9 +22,11 @@ patternMatch::~patternMatch() {
 
 //Initialize canvas & parameters
 void patternMatch::initParam2Img(long time){
-	if (confidence != NULL) delete confidence;
+	if (confidence != NULL)
+        delete confidence;
 	confidence = new float[CLASSNUM];
-    if (pointVec != NULL) delete pointVec;
+    if (pointVec != NULL)
+        delete pointVec;
 	pointVec = new vector<Point2d>;
 	minPoint.x = 200 - MARGIN;
 	minPoint.y = 200 - MARGIN;
@@ -193,6 +195,17 @@ bool patternMatch::isValid(int idx, float threshold) {
 	
 	ret = (confidence[idx] > threshold);
 	
+	return ret;
+}
+
+bool patternMatch::isTop(int idx) {
+	bool ret = false;
+	float maxC = 0;
+	for (int i = 0; i < CLASSNUM; i++)
+		if (maxC < confidence[i])
+			maxC = confidence[i];
+	ret = (confidence[idx] == maxC);
+
 	return ret;
 }
 

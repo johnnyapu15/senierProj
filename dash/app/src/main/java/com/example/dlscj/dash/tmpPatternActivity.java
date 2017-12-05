@@ -69,7 +69,7 @@ public class tmpPatternActivity extends AppCompatActivity
         */
     private int[] stagePatternIdx = {0, 2, 5, 4, 1, 3}; //usage: stagePatternIdx[currentStage] -> currentPattern
     private String[] stageStr = {"원", "기역", "S", "거꾸로 S", "N", "사각형"};
-    private float THRESHOLD = 1500;
+    private float THRESHOLD = 5000;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -89,11 +89,11 @@ public class tmpPatternActivity extends AppCompatActivity
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tutorial);
+        setContentView(R.layout.activity_pattern);
 
         d = (Dash) getApplicationContext();
-        next = (ImageButton) findViewById(R.id.nextButtont);
-        exit = (ImageButton) findViewById(R.id.exitButtont);
+        next = (ImageButton) findViewById(R.id.nextButtonp);
+        exit = (ImageButton) findViewById(R.id.exitButtonp);
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.activity_surface_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
@@ -102,9 +102,9 @@ public class tmpPatternActivity extends AppCompatActivity
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
 
-        note = (ImageView) findViewById(R.id.note);
+        note = (ImageView) findViewById(R.id.notep);
         note.setImageAlpha(70);
-        t = (ImageView) findViewById(R.id.tvimg);
+        t = (ImageView) findViewById(R.id.tvimgp);
         
         imgt = new GlideDrawableImageViewTarget(t);
         t.setVisibility(View.INVISIBLE);
@@ -124,8 +124,9 @@ public class tmpPatternActivity extends AppCompatActivity
 
         timer.schedule(new TimerTask() {
             public void run() {
-                Log.d("send", "delta : " + deltaX + ", " + deltaY);
+                Log.d("PATTERN", "delta : " + deltaX + ", " + deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
+                d.updateParam2Img(System.currentTimeMillis(), (float)deltaY/5, (float)deltaX/5);
 
                 //Pattern-game codes
                 if (currentStage > FINAL_STAGE) {
@@ -141,14 +142,25 @@ public class tmpPatternActivity extends AppCompatActivity
                                     @Override
                                     public void run() {
                                         Toast.makeText(getApplicationContext(), "맞았어요! 다음 단계로 넘어갑니다.", Toast.LENGTH_SHORT).show();
+                                        d.initParam2Img(System.currentTimeMillis());
                                         d.sleepHandler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-                                                next.setVisibility(View.VISIBLE);
-                                                exit.setVisibility(View.VISIBLE);
-                                                note.setVisibility(View.VISIBLE);
-                                                t.setVisibility(View.VISIBLE);
-                                                set_gif();
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                next.setVisibility(View.VISIBLE);
+                                                                exit.setVisibility(View.VISIBLE);
+                                                                note.setVisibility(View.VISIBLE);
+                                                                t.setVisibility(View.VISIBLE);
+                                                                set_gif();
+                                                            }
+                                                        });
+                                                    }
+                                                }).start();
                                                 start_flag = 0;
                                             }
                                         }, 2000);
@@ -156,20 +168,6 @@ public class tmpPatternActivity extends AppCompatActivity
                                 });
                             }
                         }).start();
-                    } else if (isOK && !checkPat(currentStage)) {
-                        d.sleepHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                next.setVisibility(View.INVISIBLE);
-                                exit.setVisibility(View.INVISIBLE);
-                                note.setVisibility(View.INVISIBLE);
-                                t.setVisibility(View.INVISIBLE);
-                            }
-                        }, 1000);
-
-                    } else {
-                        //WRONG ANSWER
-                        //NO ACTION.
                     }
                 }
 
@@ -240,6 +238,23 @@ public class tmpPatternActivity extends AppCompatActivity
 
         d.matInput = inputFrame.rgba();
 
+        if(isOK == true) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            next.setVisibility(View.INVISIBLE);
+                            exit.setVisibility(View.INVISIBLE);
+                            note.setVisibility(View.INVISIBLE);
+                            t.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                }
+            }).start();
+        }
+
         if (d.HSVFilter(d.matInput.getNativeObjAddr(), d.matInput.getNativeObjAddr(), d.rsltarr)) {
             //버튼 투명하게!, 초깃값 설정
             if (start_flag == 0) {
@@ -289,18 +304,20 @@ public class tmpPatternActivity extends AppCompatActivity
             deltaX = 0;
             deltaY = 0;
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            next.setVisibility(View.VISIBLE);
-                            exit.setVisibility(View.VISIBLE);
-                        }
-                    });
-                }
-            }).start();
+            if(isOK == false) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                next.setVisibility(View.VISIBLE);
+                                exit.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+                }).start();
+            }
         }
 
 
@@ -312,7 +329,18 @@ public class tmpPatternActivity extends AppCompatActivity
     }
 
     public void nextButtontClicked(View v) {
-        invs_img();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        t.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        }).start();
+        startTime = System.currentTimeMillis();
         isOK = true;
     }
 
@@ -333,12 +361,13 @@ public class tmpPatternActivity extends AppCompatActivity
         */
         boolean ret = false;
         if (startTime != 0) {
-
-
-            ret = d.isValidPattern(stagePatternIdx[stage], THRESHOLD);
+            float[] conf = new float[7];
+            d.getPredicted("CNN", conf);
+            ret = d.isTopPattern(stagePatternIdx[stage-1], THRESHOLD);
 
             boolean atInterval = STAGETIME < System.currentTimeMillis() - startTime;
-            Log.d("PATTERN", "atInterval?: " + String.valueOf(atInterval) + " isRight?: " + String.valueOf(ret) + " Current stage: " + currentStage + ", " + stageStr[currentStage]);
+            Log.d("PATTERN", "atInterval?: " + String.valueOf(atInterval) + " isRight?: " + String.valueOf(ret) + " Current stage: " + stagePatternIdx[stage-1] + ", " + stageStr[currentStage-1]);
+            Log.d("PATTERN", "Confidences: " + String.valueOf(conf[0])+ " " + String.valueOf(conf[1])+ " " + String.valueOf(conf[2])+ " " + String.valueOf(conf[3])+ " " + String.valueOf(conf[4])+ " " + String.valueOf(conf[5])+ " " + String.valueOf(conf[6]));
             if (atInterval & ret) {
                 Log.d("PATTERN", "GO TO NEXT STAGE");
                 //타임오버, 맞음 -> 다음 스테이지로
@@ -367,11 +396,6 @@ public class tmpPatternActivity extends AppCompatActivity
 
     public void initPat(int stage) {
         d.initParam2Img(System.currentTimeMillis());
-    }
-
-    public void invs_img() {
-        t.setVisibility(View.INVISIBLE);
-        startTime = System.currentTimeMillis();
     }
 
     public void set_gif() {

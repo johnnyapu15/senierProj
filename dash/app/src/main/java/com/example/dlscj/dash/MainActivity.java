@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
     public void button3Clicked(View view) {
-        Intent intent = new Intent(getApplicationContext(), PatternActivity.class);
+        Intent intent = new Intent(getApplicationContext(), tmpPatternActivity.class);
         startActivity(intent);
     }
 

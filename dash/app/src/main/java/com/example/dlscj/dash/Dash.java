@@ -322,6 +322,7 @@ public class Dash extends Application {
     public native void updateParam2Img(long time, float v, float a);
     public native void getPredicted(String predAlgorithm, float[] confs);
     public native boolean isValidPattern(int idx, float threshold);
+    public native boolean isTopPattern(int idx, float threshold);
     public native void isTop3(int idx, float threshold);
     public native void getImageFromParam(long input);
     public native int getPointNum();
