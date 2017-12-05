@@ -91,8 +91,8 @@ bool HSVFilter::DrawObj_JNI(Rect& bb, JNIEnv* env, jdoubleArray& bbarr){
         //Draw
         float centerX = bb.x + bb.width/2;
         float centerY = bb.y + bb.height/2;
-        cvRectangle(image, bb.tl(), bb.br(), Scalar(255), 5,5,0);
-        cvCircle(image, CvPoint(centerX, centerY), 2, CvScalar(255), 4);
+        cvRectangle(image, bb.tl(), bb.br(), Scalar(0, 233, 255), 5,5,0);
+        cvCircle(image, CvPoint(centerX, centerY), 2, CvScalar(0, 233, 255), 4);
 
         /*
         //for trace
