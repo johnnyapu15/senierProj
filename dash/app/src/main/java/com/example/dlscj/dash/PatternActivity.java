@@ -1,7 +1,5 @@
 package com.example.dlscj.dash;
 
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -49,15 +47,26 @@ public class PatternActivity extends AppCompatActivity
     private float rel_x, rel_y;
 
     Timer timer = new Timer();
-    private boolean isNext = false;
+    private boolean isOK = false;
     private boolean stageNext = false;
-    private long DETECTION_START = 0;
+    private long CNN_START = 0;
     private long DETECTION_INTERVAL = 2000;
     private int currentStage = 1;
-    private int FINAL_STAGE = 5;
-    private int[] stagePatternIdx = {3,2,1};
+    private int FINAL_STAGE = 6;
+        /*
+        The CNN model trained: "CIRCLE"-0, "N"-1, "L"-2, "RECT"-3, "RS"-4, "S"-5, "INTERMEDIATE"-6
+        Pattern game:
+            Stage 1: CIRCLE
+            Stage 2: L
+            Stage 3: S
+            Stage 4: RS
+            Stage 5: N
+            Stage 6: RECTANGLE
+        */
+    private int[] stagePatternIdx = {0, 2, 5, 4, 1, 3}; //usage: stagePatternIdx[currentStage] -> currentPattern
+    private String[] stageStr = {"원", "기역", "S", "거꾸로 S", "N", "사각형"};
     private double PATTERN_THRESHOLD = 1500;
-    private float[] confidence = new float[6];
+    private float[] confidence = new float[7];
 
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -78,11 +87,11 @@ public class PatternActivity extends AppCompatActivity
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_free);
+        setContentView(R.layout.activity_pattern);
 
         d = (Dash) getApplicationContext();
-        next = (ImageButton) findViewById(R.id.nextButtont);
-        exit = (ImageButton) findViewById(R.id.exitButtont);
+        next = (ImageButton) findViewById(R.id.nextButtonp);
+        exit = (ImageButton) findViewById(R.id.exitButtonp);
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.activity_surface_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
@@ -91,9 +100,10 @@ public class PatternActivity extends AppCompatActivity
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
 
-        note = (ImageView) findViewById(R.id.note);
+        note = (ImageView) findViewById(R.id.notep);
         note.setImageAlpha(70);
-        t = (ImageView) findViewById(R.id.tvimg);
+        t = (ImageView) findViewById(R.id.tvimgp);
+
         imgt = new GlideDrawableImageViewTarget(t);
         t.setVisibility(View.INVISIBLE);
         d.initPatternMatch();
@@ -111,23 +121,24 @@ public class PatternActivity extends AppCompatActivity
 
         timer.schedule(new TimerTask() {
             public void run() {
-                Log.d("send", "del,ta : " + deltaX + ", " + deltaY);
+                Log.d("send", "delta : " + deltaX + ", " + deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
-                d.updateParam2Img(System.currentTimeMillis(), (float)deltaY, (float)deltaX);
-                //Pattern codes
+                d.updateParam2Img(System.currentTimeMillis(), (float) deltaY / 5, (float) deltaX / 5);
+
+                //Pattern-game codes
                 if (currentStage > FINAL_STAGE) {
                     finish();
                 } else {
                     //JJA: 인식 취소가 적정 인터벌이상 지속된 경우, 패턴 인식을 진행한다.
-                    if (System.currentTimeMillis() - DETECTION_START > DETECTION_INTERVAL) {
+                    if (System.currentTimeMillis() - CNN_START > DETECTION_INTERVAL) {
                         //1. 패턴 인식으로 현재 스테이지와 맞는 지 불린값 체크
                         //2. 불린값이 true -> Next stage
                         //            false-> Process as is & DETECTIONSTART = System.currentTimeMillis();
-                        if (isNext) {
+                        if (isOK) {
                             d.getPredicted("CNN", confidence);
-                            if (d.isValidPattern(stagePatternIdx[currentStage], (float)PATTERN_THRESHOLD)) {
+                            if (d.isValidPattern(stagePatternIdx[currentStage], (float) PATTERN_THRESHOLD)) {
                                 //RIGHT ANSWER
-                                isNext = false;
+                                isOK = false;
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -138,11 +149,21 @@ public class PatternActivity extends AppCompatActivity
                                                 d.sleepHandler.postDelayed(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        next.setVisibility(View.VISIBLE);
-                                                        exit.setVisibility(View.VISIBLE);
-                                                        note.setVisibility(View.VISIBLE);
-                                                        t.setVisibility(View.VISIBLE);
-                                                        set_gif();
+                                                        new Thread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                runOnUiThread(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        next.setVisibility(View.VISIBLE);
+                                                                        exit.setVisibility(View.VISIBLE);
+                                                                        note.setVisibility(View.VISIBLE);
+                                                                        t.setVisibility(View.VISIBLE);
+                                                                        set_gif();
+                                                                    }
+                                                                });
+                                                            }
+                                                        }).start();
                                                         start_flag = 0;
                                                     }
                                                 }, 2000);
@@ -150,18 +171,6 @@ public class PatternActivity extends AppCompatActivity
                                         });
                                     }
                                 }).start();
-                            } else {
-                                //WRONG ANSWER
-                                DETECTION_START = System.currentTimeMillis();
-                                d.sleepHandler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        next.setVisibility(View.INVISIBLE);
-                                        exit.setVisibility(View.INVISIBLE);
-                                        note.setVisibility(View.INVISIBLE);
-                                        t.setVisibility(View.INVISIBLE);
-                                    }
-                                }, 1000);
                             }
                         }
                     }
@@ -233,6 +242,24 @@ public class PatternActivity extends AppCompatActivity
 
         d.matInput = inputFrame.rgba();
 
+
+          if((isOK == true) & (next.getVisibility() == View.VISIBLE)) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            next.setVisibility(View.INVISIBLE);
+                            exit.setVisibility(View.INVISIBLE);
+                            note.setVisibility(View.INVISIBLE);
+                            t.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                }
+            }).start();
+        }
+
         if (d.HSVFilter(d.matInput.getNativeObjAddr(), d.matInput.getNativeObjAddr(), d.rsltarr)) {
             //버튼 투명하게!, 초깃값 설정
             if (start_flag == 0) {
@@ -279,30 +306,29 @@ public class PatternActivity extends AppCompatActivity
             }).start();
         } else {
             //JJA
-            //인식 취소가 시작되었을 때의 시간 기록
+            //감지 불가시 시간 기록
             if (start_flag != 0)
-                DETECTION_START = System.currentTimeMillis();
+                CNN_START = System.currentTimeMillis();
 
 
             start_flag = 0;
             deltaX = 0;
             deltaY = 0;
 
-
-            //현재 간헐적으로 발생하는 뷰 종료->부적절한 쓰레드 오류 이슈를 이 부분에서 해결할 수 있을 것 같다.
-            //이때 생성한 쓰레드를 전역변수로 저장해서 해당 쓰레드를 기억한다면 해결 가능할 것.
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            next.setVisibility(View.VISIBLE);
-                            exit.setVisibility(View.VISIBLE);
-                        }
-                    });
-                }
-            }).start();
+            if((isOK == false) & (next.getVisibility() == View.INVISIBLE)) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                next.setVisibility(View.VISIBLE);
+                                exit.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+                }).start();
+            }
         }
 
 
@@ -314,14 +340,22 @@ public class PatternActivity extends AppCompatActivity
     }
 
     public void nextButtontClicked(View v) {
-        invs_img();
-        isNext = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        t.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        }).start();
+        d.initParam2Img(System.currentTimeMillis());
+        Log.d("PATTERN", "INIT Pattern...getPointNum: " + String.valueOf(d.getPointNum()));
+        isOK = true;
     }
 
-    public void invs_img() {
-        t.setVisibility(View.INVISIBLE);
-        d.initParam2Img(System.currentTimeMillis());
-    }
 
     public void set_gif() {
         switch (currentStage) {
