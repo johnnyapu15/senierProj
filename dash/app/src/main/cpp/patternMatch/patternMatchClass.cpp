@@ -79,7 +79,10 @@ void patternMatch::updateParam2Img(long time, float v, float a){
             float d = TIMEVALUE * preVelo / 2;
 
             presPoint = Point2d(prePoint.x + d*cos(preAngle), prePoint.y + d*sin(preAngle));
-
+            if (presPoint.x < MARGIN || presPoint.y < MARGIN || presPoint.x > 400 - MARGIN || presPoint.y > 400 - MARGIN){
+                std::cout << "Out of canvas. The update will not applicated." << std::endl;
+            }
+            else{
             //Modify minimum width and height.
             if (minPoint.x > presPoint.x - MARGIN) minPoint.x = presPoint.x - MARGIN;
             if (minPoint.y > presPoint.y - MARGIN) minPoint.y = presPoint.y - MARGIN;
@@ -97,6 +100,7 @@ void patternMatch::updateParam2Img(long time, float v, float a){
             //This deviding (/10) make time-dimension to sec/10.
             preAngle += TIMEVALUE * angleD;
             prePoint = presPoint;
+            }
         }
         preVelo = v;
         angleD = a * DEG2RAD;
