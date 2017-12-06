@@ -348,8 +348,10 @@ public class Dash extends Application {
             mp = MediaPlayer.create(this, R.raw.msg1);
         else if(sound == "msg2")
             mp = MediaPlayer.create(this, R.raw.msg2);
-        else if(sound == "msg3")
-            mp = MediaPlayer.create(this, R.raw.msg2);
+        else if(sound == "bgm")
+            mp = MediaPlayer.create(this,R.raw.bgm);
+        else if(sound == "success")
+            mp = MediaPlayer.create(this,R.raw.success);
         mp.start();
     }
 
