@@ -109,7 +109,7 @@ public class PatternActivity extends AppCompatActivity
         d.initPatternMatch();
         d.initNN(this.getFilesDir().getPath());
         d.initParam2Img(System.currentTimeMillis());
-
+        CNN_START = System.currentTimeMillis();
         d.sleepHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -136,7 +136,11 @@ public class PatternActivity extends AppCompatActivity
                         //            false-> Process as is & DETECTIONSTART = System.currentTimeMillis();
                         if (isOK) {
                             d.getPredicted("CNN", confidence);
-                            if (d.isValidPattern(stagePatternIdx[currentStage], (float) PATTERN_THRESHOLD)) {
+                            d.getImageFromParam(d.routeMat.getNativeObjAddr());
+                            Log.d("PATTERN",   "Current stage: " + stagePatternIdx[currentStage - 1] + ", " + stageStr[currentStage - 1]);
+                            Log.d("PATTERN", "Confidences: " + String.valueOf(confidence[0])+ " " + String.valueOf(confidence[1])+ " " + String.valueOf(confidence[2])+ " " + String.valueOf(confidence[3])+ " " + String.valueOf(confidence[4])+ " " + String.valueOf(confidence[5])+ " " + String.valueOf(confidence[6]));
+
+                            if (d.isTopPattern(stagePatternIdx[currentStage - 1], (float) PATTERN_THRESHOLD)) {
                                 //RIGHT ANSWER
                                 isOK = false;
                                 new Thread(new Runnable() {
@@ -146,6 +150,7 @@ public class PatternActivity extends AppCompatActivity
                                             @Override
                                             public void run() {
                                                 Toast.makeText(getApplicationContext(), "맞았어요! 다음 단계로 넘어갑니다.", Toast.LENGTH_SHORT).show();
+                                                currentStage ++;
                                                 d.sleepHandler.postDelayed(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -304,11 +309,10 @@ public class PatternActivity extends AppCompatActivity
                     });
                 }
             }).start();
+            CNN_START = System.currentTimeMillis();
         } else {
-            //JJA
-            //감지 불가시 시간 기록
-            if (start_flag != 0)
-                CNN_START = System.currentTimeMillis();
+
+
 
 
             start_flag = 0;
@@ -352,6 +356,7 @@ public class PatternActivity extends AppCompatActivity
             }
         }).start();
         d.initParam2Img(System.currentTimeMillis());
+        CNN_START = System.currentTimeMillis();
         Log.d("PATTERN", "INIT Pattern...getPointNum: " + String.valueOf(d.getPointNum()));
         isOK = true;
     }
