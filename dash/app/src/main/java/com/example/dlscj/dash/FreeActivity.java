@@ -44,9 +44,6 @@ public class FreeActivity extends AppCompatActivity
 
     Timer timer = new Timer();
 
-
-    float rel_x, rel_y;
-
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -165,12 +162,9 @@ public class FreeActivity extends AppCompatActivity
                 start_flag = 1;
                 Log.d(TAG, "start : "+start_x+", "+start_y);
 
+                d.getRealPose(mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
 
-                rel_x = (float)start_x * d.d_size.x / d.matInput.cols();
-                rel_y = (float)start_y * d.d_size.y / d.matInput.rows();
-
-
-                if(d.isTouchInside(back, (int)rel_x, (int)rel_y))
+                if(d.isTouchInside(back, d.rel_x, d.rel_y))
                     backButtonClicked(back);
             }
             end_x = d.rsltarr[0] + d.rsltarr[2] / 2;

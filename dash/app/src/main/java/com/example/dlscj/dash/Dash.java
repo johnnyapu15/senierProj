@@ -115,6 +115,7 @@ public class Dash extends Application {
     int rel_x, rel_y;
     int x, y;
 
+
     //Head random object
     Random random = new Random();
     int head_cnt = 0;
@@ -180,12 +181,22 @@ public class Dash extends Application {
         System.loadLibrary("native-lib");
     }
 
-    public Point convert2cv(View frame, int deltaX, int deltaY){
-        x = (frame.getLeft() + frame.getRight()) / 2 + deltaX;
-        y = (frame.getBottom() + frame.getTop()) / 2 + deltaY;
-        rel_x = x * matInput.cols() / d_size.x;
-        rel_y = y * matInput.rows() / d_size.y;
-        return new Point(rel_x, rel_y);
+    void getRealPose(int camera_width, int camera_height){
+        int width_offset = (d_size.x - camera_width) / 2;
+        int height_offset = (d_size.y - camera_height) / 2;
+        x = (int)(rsltarr[0] + rsltarr[2])/2;
+        y = (int)(rsltarr[1] + rsltarr[3])/2;
+        rel_x = x * camera_width / matInput.cols() + width_offset;
+        rel_y = y * camera_height / matInput.rows() + height_offset;
+    }
+
+    public void convert2cv(View frame, int deltaX, int deltaY, int camera_width, int camera_height){
+        int width_offset = (d_size.x - camera_width) / 2;
+        int height_offset = (d_size.y - camera_height) / 2;
+        x = (frame.getLeft() + frame.getRight()) / 2 + deltaX - width_offset;
+        y = (frame.getBottom() + frame.getTop()) / 2 + deltaY - height_offset;
+        rel_x = x * matInput.cols() / camera_width;
+        rel_y = y * matInput.rows() / camera_height;
     }
 
     public void onCreate() {

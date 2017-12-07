@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity
 
     private int start_flag = 1;
 
-    float rel_x = 0, rel_y = 0;
     Point d_size;
     Display display;
 
@@ -196,16 +195,20 @@ public class MainActivity extends AppCompatActivity
             if(start_flag == 0) {
                 start_flag = 1;
 
+                /*
                 rel_x = (float)(d.rsltarr[0] + d.rsltarr[2] / 2) * d_size.x / d.matInput.cols();
                 rel_y = (float)(d.rsltarr[1] + d.rsltarr[3] / 2) * d_size.y / d.matInput.rows();
+                */
 
-                if(d.isTouchInside(exit, (int)rel_x, (int)rel_y))
+                d.getRealPose(mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
+
+                if(d.isTouchInside(exit, d.rel_x, d.rel_y))
                     exitButtonClicked(exit);
                 else {
-                    if(d.isTouchInside(b2, (int)rel_x, (int)rel_y)) button2Clicked(b2);
+                    if(d.isTouchInside(b2, d.rel_x, d.rel_y)) button2Clicked(b2);
                     else {
-                        if(d.isTouchInside(b1, (int)rel_x, (int)rel_y)) button1Clicked(b1);
-                        if(d.isTouchInside(b3, (int)rel_x, (int)rel_y)) button3Clicked(b3);
+                        if(d.isTouchInside(b1, d.rel_x, d.rel_y)) button1Clicked(b1);
+                        if(d.isTouchInside(b3, d.rel_x, d.rel_y)) button3Clicked(b3);
                     }
                 }
             }

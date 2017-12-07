@@ -120,9 +120,9 @@ public class InitActivity extends AppCompatActivity
         d.sleepHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Point cv_coord = d.convert2cv(framec, 0, 0);
+                d.convert2cv(framec, 0, 0, mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
 
-                d.TouchCallback(cv_coord.x, cv_coord.y);
+                d.TouchCallback(d.rel_x, d.rel_y);
                 Animation anim= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.move);
                 framec.startAnimation(anim);
                 anim.setFillEnabled(true);
@@ -131,27 +131,27 @@ public class InitActivity extends AppCompatActivity
                 d.sleepHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Point cv_coord = d.convert2cv(framec, -450, -150);
+                        d.convert2cv(framec, -450, -150, mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
 
-                        d.TouchCallback(cv_coord.x, cv_coord.y);
+                        d.TouchCallback(d.rel_x, d.rel_y);
                         d.sleepHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                Point cv_coord = d.convert2cv(framec, 450, -150);
+                                d.convert2cv(framec, 450, -150, mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
 
-                                d.TouchCallback(cv_coord.x, cv_coord.y);
+                                d.TouchCallback(d.rel_x, d.rel_y);
                                 d.sleepHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Point cv_coord = d.convert2cv(framec, 450, 150);
+                                        d.convert2cv(framec, 450, 150, mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
 
-                                        d.TouchCallback(cv_coord.x, cv_coord.y);
+                                        d.TouchCallback(d.rel_x, d.rel_y);
                                         d.sleepHandler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-                                                Point cv_coord = d.convert2cv(framec, -450, 150);
+                                                d.convert2cv(framec, -450, 150, mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
 
-                                                d.TouchCallback(cv_coord.x, cv_coord.y);
+                                                d.TouchCallback(d.rel_x, d.rel_y);
 
                                                 d.sleepHandler.postDelayed(new Runnable() {
                                                                                @Override

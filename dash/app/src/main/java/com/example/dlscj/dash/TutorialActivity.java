@@ -50,7 +50,6 @@ public class TutorialActivity extends AppCompatActivity
     private int start_flag = 0;
     private double start_x, start_y, end_x, end_y;
     private double deltaX = 0, deltaY = 0;
-    private float rel_x, rel_y;
 
     Timer timer = new Timer();
     private boolean isPV = false;
@@ -250,13 +249,10 @@ public class TutorialActivity extends AppCompatActivity
                     start_flag = 1;
                 Log.d(TAG, "start : " + start_x + ", " + start_y);
 
+                d.getRealPose(mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
 
-                rel_x = (float) start_x * d.d_size.x / d.matInput.cols();
-                rel_y = (float) start_y * d.d_size.y / d.matInput.rows();
-
-
-                if (d.isTouchInside(exit, (int) rel_x, (int) rel_y)) exitButtontClicked(exit);
-                else if (d.isTouchInside(next, (int) rel_x, (int) rel_y)) nextButtontClicked(next);
+                if (d.isTouchInside(exit, d.rel_x, d.rel_y)) exitButtontClicked(exit);
+                else if (d.isTouchInside(next, d.rel_x, d.rel_y)) nextButtontClicked(next);
             }
             if(isOK == false)
                 start_flag = 0;
