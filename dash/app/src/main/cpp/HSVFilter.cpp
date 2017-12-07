@@ -44,8 +44,10 @@ void HSVFilter::SelectColor(int x, int y){
     if (y > hsv.rows) y = hsv.rows - 1;
 
     //for debug
+    /*
     touched.x = x;
     touched.y = y;
+     */
 
     //Get hsv value
     IplImage hsv_img(hsv);
@@ -246,7 +248,7 @@ jboolean HSVFilter::FindObj_JNI(JNIEnv *env, jobject instance,
     }*/
 
     //for debug
-    cvCircle(image, touched, 2, CvScalar(255), 4);
+    //cvCircle(image, touched, 2, CvScalar(255), 4);
 
     cvarrToMat(image).copyTo(matResult);
 
