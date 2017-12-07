@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -92,6 +93,8 @@ public class MainActivity extends AppCompatActivity
         t2 = (TextView)findViewById(R.id.textView2);
         t3 = (TextView)findViewById(R.id.textView3);
         exit = (ImageButton)findViewById(R.id.exitButton);
+
+        if(d.bgm != null) d.bgm.start();
 
         initControlText();
 
@@ -271,6 +274,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         if (mOpenCvCameraView != null) mOpenCvCameraView.disableView();
+        CloseBluetoothGATT();
+        d.bgm.release();
         super.onDestroy();
     }
 

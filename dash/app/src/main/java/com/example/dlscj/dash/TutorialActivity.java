@@ -2,6 +2,7 @@ package com.example.dlscj.dash;
 
 import android.content.Intent;
 import android.media.Image;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,7 +25,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import dashcontrol.control.BodyLinearAngular;
+import dashcontrol.control.Speaker;
 
+import static dashcontrol.config.SpeakerConfig.getSoundFileSequence;
 import static dashcontrol.utils.Debug.TAG;
 
 /**
@@ -42,6 +45,7 @@ public class TutorialActivity extends AppCompatActivity
     ImageView t, note;
     GlideDrawableImageViewTarget imgt;
 
+    private MediaPlayer mp;
 
     private int start_flag = 0;
     private double start_x, start_y, end_x, end_y;
@@ -87,14 +91,15 @@ public class TutorialActivity extends AppCompatActivity
         mOpenCvCameraView.setCameraIndex(1); // front-camera(1),  back-camera(0)
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
-
+        if(d.bgm!=null && d.bgm.isPlaying() == false) {
+            d.bgm.start();
+        }
         note = (ImageView) findViewById(R.id.note);
         note.setImageAlpha(70);
 
         t = (ImageView) findViewById(R.id.tvimg);
         t.setVisibility(View.INVISIBLE);
         imgt = new GlideDrawableImageViewTarget(t);
-
 
         initTut();
         d.sleepHandler.postDelayed(new Runnable() {
@@ -115,7 +120,13 @@ public class TutorialActivity extends AppCompatActivity
 
                 //Tutorial codes
                 if (currentStage >= 5) {
-                    finish();
+                    d.OutputSound(mp, "success");
+                    //Toast.makeText(getApplicationContext(), "연습이 끝났습니다!", Toast.LENGTH_SHORT).show();
+                    d.sleepHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {finish();
+                        }
+                    }, 2000);
                 } else {
                     if (isOK && checkTut(currentStage)) {
                         //RIGHT ANSWER
@@ -126,6 +137,8 @@ public class TutorialActivity extends AppCompatActivity
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        d.Send_WW_Command(new Speaker(getSoundFileSequence()).getSpeaker());
+                                        d.OutputSound(mp, "success");
                                         Toast.makeText(getApplicationContext(), "맞았어요! 다음 단계로 넘어갑니다.", Toast.LENGTH_SHORT).show();
                                         d.sleepHandler.postDelayed(new Runnable() {
                                             @Override
@@ -281,7 +294,7 @@ public class TutorialActivity extends AppCompatActivity
             deltaX = 0;
             deltaY = 0;
 
-            if(isOK == false) {
+            if((isOK == false) & (next.getVisibility() == View.INVISIBLE)) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -313,6 +326,7 @@ public class TutorialActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        note.setVisibility(View.INVISIBLE);
                         t.setVisibility(View.INVISIBLE);
                     }
                 });

@@ -68,12 +68,6 @@
 
         </activity>
 
-        <activity android:name=".tmpPatternActivity"
-            android:screenOrientation="landscape"
-            android:configChanges="keyboardHidden|orientation">
-
-        </activity>
-
         <activity android:name=".PatternActivity"
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation">

@@ -168,12 +168,7 @@ public class InitActivity extends AppCompatActivity
                                                                                    d.sleepHandler.postDelayed(new Runnable() {
                                                                                        @Override
                                                                                        public void run() {
-                                                                                           new Thread(new Runnable() {
-                                                                                               @Override
-                                                                                               public void run() {
-                                                                                                   d.OutputSound(mp2, msg2);
-                                                                                               }
-                                                                                           }).start();
+                                                                                           d.OutputSound(mp2, msg2);
                                                                                            d.sleepHandler.postDelayed(new Runnable() {
                                                                                                @Override
                                                                                                public void run() {
