@@ -95,7 +95,7 @@ void patternMatch::updateParam2Img(long time, float v, float a){
             pointVec->push_back(presPoint);
 
             //preT = time;
-            preT++;
+            preT += 100;
 
             //This deviding (/10) make time-dimension to sec/10.
             preAngle += TIMEVALUE * angleD;

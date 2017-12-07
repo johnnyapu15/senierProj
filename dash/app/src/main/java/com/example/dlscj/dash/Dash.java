@@ -119,8 +119,8 @@ public class Dash extends Application {
     Random random = new Random();
     int head_cnt = 0;
     int current_head_cnt = 0;
-    int head_cnt_min = 20;
-    int head_cnt_max = 100;
+    int head_cnt_min = 15;
+    int head_cnt_max = 30;
 
     void initHeadCnt(){
         head_cnt = random.nextInt(head_cnt_max - head_cnt_min) + head_cnt_min;
@@ -139,6 +139,7 @@ public class Dash extends Application {
             current_head_cnt = 0;
             Send_WW_Command(new Head(nextRandomHeadRight(), nextRandomHeadUP()).getHead());
         }
+        current_head_cnt++;
     }
 
     //Route param
@@ -355,7 +356,7 @@ public class Dash extends Application {
     public native void getPredicted(String predAlgorithm, float[] confs);
     public native boolean isValidPattern(int idx, float threshold);
     public native boolean isTopPattern(int idx, float threshold);
-    public native void isTop3(int idx, float threshold);
+    public native boolean isTop3(int idx, float threshold);
     public native void getImageFromParam(long input);
     public native int getPointNum();
 

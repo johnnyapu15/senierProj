@@ -132,7 +132,7 @@ public class PatternActivity extends AppCompatActivity
                 set_gif();
             }
         }, 1000);
-        
+
         if(d.bgm!=null && d.bgm.isPlaying() == false) {
             d.bgm.start();
         }
@@ -142,9 +142,9 @@ public class PatternActivity extends AppCompatActivity
         timer.schedule(new TimerTask() {
             public void run() {
                 d.callHeadCommand();
-                Log.d("send", "delta : " + deltaX + ", " + deltaY);
+                Log.d("PATTERN", "delta : " + (float) (deltaY) + ", " + (float)( - deltaX));
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
-                d.updateParam2Img(System.currentTimeMillis(), (float) deltaY / 140, (float) - deltaX / 200);
+                d.updateParam2Img(System.currentTimeMillis(), (float) (deltaY / 2), (float)( - deltaX));
                 d.getImageFromParam(d.routeMat.getNativeObjAddr());
                 m = Bitmap.createBitmap(d.routeMat.cols(), d.routeMat.rows(), Bitmap.Config.ARGB_8888);
 
@@ -179,11 +179,11 @@ public class PatternActivity extends AppCompatActivity
                         //            false-> Process as is & DETECTIONSTART = System.currentTimeMillis();
                         if (isOK) {
                             d.getPredicted("CNN", confidence);
-                            d.getImageFromParam(d.routeMat.getNativeObjAddr());
+                            //d.getImageFromParam(d.routeMat.getNativeObjAddr());
                             Log.d("PATTERN",   "Current stage: " + stagePatternIdx[currentStage - 1] + ", " + stageStr[currentStage - 1]);
                             Log.d("PATTERN", "Confidences: " + String.valueOf(confidence[0])+ " " + String.valueOf(confidence[1])+ " " + String.valueOf(confidence[2])+ " " + String.valueOf(confidence[3])+ " " + String.valueOf(confidence[4])+ " " + String.valueOf(confidence[5])+ " " + String.valueOf(confidence[6]));
 
-                            if (d.isTopPattern(stagePatternIdx[currentStage - 1], (float) PATTERN_THRESHOLD)) {
+                            if (d.isTop3(stagePatternIdx[currentStage - 1], (float) PATTERN_THRESHOLD)) {
                                 //RIGHT ANSWER
                                 isOK = false;
                                 new Thread(new Runnable() {
