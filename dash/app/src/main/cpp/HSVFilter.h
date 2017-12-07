@@ -16,7 +16,7 @@ private:
 	bool clicked;	//check initiation or not
 
 	//for debug
-	CvPoint touched;
+	//CvPoint touched;
 		
 	//Range of Mask
 	//int min_scalar[3] = {6, 178, 101};

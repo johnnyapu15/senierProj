@@ -169,7 +169,7 @@ Java_com_example_dlscj_dash_Dash_isTop3(JNIEnv *env, jobject instance, jint idx,
     }
 }
 
-JNIEXPORT jboolean JNICALL
+JNIEXPORT void JNICALL
 Java_com_example_dlscj_dash_Dash_getImageFromParam(JNIEnv *env, jobject instance, jlong inputMat){
     if (pm != NULL) {
         //Mat m;
