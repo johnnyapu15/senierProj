@@ -75,7 +75,7 @@ public class PatternActivity extends AppCompatActivity
         */
     private int[] stagePatternIdx = {0, 2, 5, 4, 1, 3}; //usage: stagePatternIdx[currentStage] -> currentPattern
     private String[] stageStr = {"원", "기역", "S", "거꾸로 S", "N", "사각형"};
-    private double PATTERN_THRESHOLD = 3000;
+    private double PATTERN_THRESHOLD = 2500;
     private float[] confidence = new float[7];
 
 
@@ -143,7 +143,7 @@ public class PatternActivity extends AppCompatActivity
                 d.callHeadCommand();
                 Log.d("PATTERN", "delta : " + (float) (deltaY) + ", " + (float)( - deltaX));
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
-                d.updateParam2Img(System.currentTimeMillis(), (float) (deltaY / 2), (float)( - deltaX));
+                d.updateParam2Img(System.currentTimeMillis(), (float) (deltaY / 1.3), (float)( - deltaX / 1.6));
                 d.getImageFromParam(d.routeMat.getNativeObjAddr());
                 m = Bitmap.createBitmap(d.routeMat.cols(), d.routeMat.rows(), Bitmap.Config.ARGB_8888);
 
@@ -302,10 +302,10 @@ public class PatternActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             next.setVisibility(View.INVISIBLE);
-                            exit.setVisibility(View.INVISIBLE);
+                            //exit.setVisibility(View.INVISIBLE);
                             note.setVisibility(View.INVISIBLE);
                             t.setVisibility(View.INVISIBLE);
-                            refresh.setVisibility(View.INVISIBLE);
+                            //refresh.setVisibility(View.INVISIBLE);
                             minimap.setVisibility(View.VISIBLE);
                         }
                     });
@@ -323,9 +323,9 @@ public class PatternActivity extends AppCompatActivity
 
                d.getRealPose(mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
 
-
                 if (d.isTouchInside(exit, d.rel_x, d.rel_y)) exitButtonpClicked(exit);
                 else if (d.isTouchInside(next, d.rel_x, d.rel_y)) nextButtonpClicked(next);
+                else if (d.isTouchInside(refresh, d.rel_x, d.rel_y)) refreshButtonpClicked(refresh);
             }
             end_x = d.rsltarr[0] + d.rsltarr[2] / 2;
             end_y = d.rsltarr[1] + d.rsltarr[3] / 2;
@@ -358,29 +358,41 @@ public class PatternActivity extends AppCompatActivity
             }).start();
             CNN_START = System.currentTimeMillis();
         } else {
-
-
-
-
             start_flag = 0;
             deltaX = 0;
             deltaY = 0;
+/*
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            next.setVisibility(View.VISIBLE);
+                            exit.setVisibility(View.VISIBLE);
+                            refresh.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+            }).start();
+            */
 
-            if((isOK == false) & (next.getVisibility() == View.INVISIBLE)) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                next.setVisibility(View.VISIBLE);
+                                if((isOK == false) & (next.getVisibility() == View.INVISIBLE))
+                                    next.setVisibility(View.VISIBLE);
                                 exit.setVisibility(View.VISIBLE);
                                 refresh.setVisibility(View.VISIBLE);
                             }
                         });
                     }
                 }).start();
-            }
+
+
         }
 
 

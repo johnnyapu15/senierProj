@@ -166,8 +166,7 @@ public class Dash extends Application {
             head_cnt = random.nextInt(head_cnt_max - head_cnt_min) + head_cnt_min;
             nextRandomHeadRight();
             nextRandomHeadUP();
-            Send_WW_Command(new Head(head_right_angle, 0).getHead());
-            Send_WW_Command(new Head(0, head_up_angle).getHead());
+            Send_WW_Command(new Head(head_right_angle, head_up_angle).getHead());
         }
         current_head_cnt++;
     }
@@ -218,9 +217,6 @@ public class Dash extends Application {
         display = wm.getDefaultDisplay();
         d_size = new Point();
         display.getSize(d_size);
-
-        bgm = MediaPlayer.create(this, R.raw.bgm);
-
     }
 
 

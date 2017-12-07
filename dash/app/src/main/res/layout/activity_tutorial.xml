@@ -30,8 +30,9 @@
     <ImageButton
         android:id="@+id/exitButtont"
         style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="65sp"
-        android:layout_height="65sp"
+        android:layout_width="70sp"
+        android:layout_height="70sp"
+        android:layout_marginEnd="42dp"
         android:onClick="exitButtontClicked"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="@+id/activity_surface_view"
@@ -44,6 +45,7 @@
         style="@android:style/Widget.Holo.ImageButton"
         android:layout_width="70sp"
         android:layout_height="70sp"
+        android:layout_marginEnd="42dp"
         android:onClick="nextButtontClicked"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,7 +58,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />

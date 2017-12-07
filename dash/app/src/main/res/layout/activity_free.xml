@@ -17,14 +17,14 @@
     <ImageButton
         android:id="@+id/backButton"
         style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="70sp"
+        android:layout_height="70sp"
+        android:layout_marginEnd="42dp"
         android:onClick="backButtonClicked"
         android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_surface_view"
         app:layout_constraintEnd_toEndOf="@+id/activity_surface_view"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_media_previous" />
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
 
 </android.support.constraint.ConstraintLayout>
