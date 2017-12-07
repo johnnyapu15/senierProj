@@ -2,6 +2,7 @@ package com.example.dlscj.dash;
 
 import android.app.Application;
 
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.view.Display;
 import android.graphics.Point;
@@ -231,9 +232,19 @@ public class Dash extends Application {
         display = wm.getDefaultDisplay();
         d_size = new Point();
         display.getSize(d_size);
+
+        height_offset = getStatusBarHeight();
     }
 
-
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+    
     public void RunWriteCharacteristic(BluetoothGattCharacteristic writeChar) {
         Boolean ret;
         do {
