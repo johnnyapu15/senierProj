@@ -132,13 +132,16 @@ public class PatternActivity extends AppCompatActivity
                 set_gif();
             }
         }, 1000);
-
+        
         if(d.bgm!=null && d.bgm.isPlaying() == false) {
             d.bgm.start();
         }
 
+        d.initHeadCnt();
+
         timer.schedule(new TimerTask() {
             public void run() {
+                d.callHeadCommand();
                 Log.d("send", "delta : " + deltaX + ", " + deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
                 d.updateParam2Img(System.currentTimeMillis(), (float) deltaY / 140, (float) - deltaX / 200);

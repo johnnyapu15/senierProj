@@ -46,6 +46,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Random;
 import java.util.UUID;
 import android.util.Log;
 
@@ -113,6 +114,32 @@ public class Dash extends Application {
 
     int rel_x, rel_y;
     int x, y;
+
+    //Head random object
+    Random random = new Random();
+    int head_cnt = 0;
+    int current_head_cnt = 0;
+    int head_cnt_min = 20;
+    int head_cnt_max = 100;
+
+    void initHeadCnt(){
+        head_cnt = random.nextInt(head_cnt_max - head_cnt_min) + head_cnt_min;
+    }
+
+    int nextRandomHeadUP(){
+        return random.nextInt(27) - 20;
+    }
+
+    int nextRandomHeadRight(){
+        return random.nextInt(240) - 120;
+    }
+
+    void callHeadCommand(){
+        if(current_head_cnt >= head_cnt){
+            current_head_cnt = 0;
+            Send_WW_Command(new Head(nextRandomHeadRight(), nextRandomHeadUP()).getHead());
+        }
+    }
 
     //Route param
     protected Mat routeMat = new Mat(400, 400, CV_8UC3);
