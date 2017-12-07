@@ -108,9 +108,10 @@ public class PatternActivity extends AppCompatActivity
             }
         }, 1000);
 
-
+        d.initHeadCnt();
         timer.schedule(new TimerTask() {
             public void run() {
+                d.callHeadCommand();
                 Log.d("send", "del,ta : " + deltaX + ", " + deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
                 d.updateParam2Img(System.currentTimeMillis(), (float)deltaY, (float)deltaX);

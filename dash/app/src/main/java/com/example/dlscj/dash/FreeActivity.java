@@ -38,6 +38,7 @@ public class FreeActivity extends AppCompatActivity
     private int start_flag = 0;
     private double start_x, start_y, end_x, end_y;
     private double deltaX = 0, deltaY = 0;
+    private int head_cnt = 0;
 
     ImageButton back;
 
@@ -78,10 +79,10 @@ public class FreeActivity extends AppCompatActivity
         mOpenCvCameraView.setCameraIndex(1); // front-camera(1),  back-camera(0)
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
-
-
+        d.initHeadCnt();
         timer.schedule(new TimerTask() {
             public void run() {
+                d.callHeadCommand();
                 Log.d("send", "delta : "+deltaX+", "+deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
             }

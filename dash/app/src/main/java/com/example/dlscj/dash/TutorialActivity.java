@@ -106,8 +106,10 @@ public class TutorialActivity extends AppCompatActivity
         }, 1000);
 
 
+        d.initHeadCnt();
         timer.schedule(new TimerTask() {
             public void run() {
+                d.callHeadCommand();
                 Log.d("send", "del,ta : " + deltaX + ", " + deltaY);
                 d.Send_WW_Command(new BodyLinearAngular(deltaX, deltaY).getBodyLinearAngular());
 
