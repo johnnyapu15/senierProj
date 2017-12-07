@@ -117,26 +117,55 @@ public class Dash extends Application {
     Random random = new Random();
     int head_cnt = 0;
     int current_head_cnt = 0;
-    int head_cnt_min = 20;
-    int head_cnt_max = 100;
+    int head_cnt_min = 5;
+    int head_cnt_max = 20;
+    int head_up_min = 2;
+    int head_up_max = 10;
+    int head_right_min = 5;
+    int head_right_max = 20;
+    int head_right_angle_max = 60;
+    int head_up_angle = 0;
+    int head_right_angle = 0;
 
     void initHeadCnt(){
+        head_up_angle = 0;
+        head_right_angle = 0;
         head_cnt = random.nextInt(head_cnt_max - head_cnt_min) + head_cnt_min;
     }
 
-    int nextRandomHeadUP(){
-        return random.nextInt(27) - 20;
+    void nextRandomHeadUP(){
+        int range = head_up_max - head_up_min;
+        int value = random.nextInt(range * 2) - range;
+        if(value > 0)
+            value += head_up_min;
+        else
+            value -= head_up_min;
+        head_up_angle += value;
+        if(head_up_angle > 7) head_up_angle = 7;
+        if(head_up_angle < -20) head_up_angle = -20;
     }
 
-    int nextRandomHeadRight(){
-        return random.nextInt(240) - 120;
+    void nextRandomHeadRight(){
+        int range = head_right_max - head_right_min;
+        int value = random.nextInt(range * 2) - range;
+        if(value > 0)
+            value += head_right_min;
+        else
+            value -= head_right_min;
+        head_right_angle += value;
+        if(head_right_angle > head_right_angle_max) head_right_angle = head_right_angle_max;
+        if(head_right_angle < -head_right_angle_max) head_right_angle = -head_right_angle_max;
     }
 
     void callHeadCommand(){
         if(current_head_cnt >= head_cnt){
             current_head_cnt = 0;
-            Send_WW_Command(new Head(nextRandomHeadRight(), nextRandomHeadUP()).getHead());
+            head_cnt = random.nextInt(head_cnt_max - head_cnt_min) + head_cnt_min;
+            nextRandomHeadRight();
+            nextRandomHeadUP();
+            Send_WW_Command(new Head(head_right_angle, head_up_angle).getHead());
         }
+        current_head_cnt++;
     }
 
     //Route param
