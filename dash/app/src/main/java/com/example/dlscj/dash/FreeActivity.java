@@ -78,7 +78,9 @@ public class FreeActivity extends AppCompatActivity
         mOpenCvCameraView.setCameraIndex(1); // front-camera(1),  back-camera(0)
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
-
+        if(d.bgm!=null && d.bgm.isPlaying() == false) {
+            d.bgm.start();
+        }
 
         timer.schedule(new TimerTask() {
             public void run() {

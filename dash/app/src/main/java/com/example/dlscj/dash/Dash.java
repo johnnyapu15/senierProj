@@ -70,6 +70,7 @@ import static dashcontrol.config.SpeakerConfig.getSoundFileSequence;
 import static dashcontrol.utils.Debug.ByteToHexString;
 import static dashcontrol.utils.Debug.LOG;
 import static dashcontrol.utils.Debug.TAG;
+import static org.opencv.core.CvType.CV_8UC3;
 
 public class Dash extends Application {
 
@@ -106,6 +107,7 @@ public class Dash extends Application {
     PowerManager mPowerManager;
     PowerManager.WakeLock mWakeLock;
 
+    MediaPlayer bgm;
     Point d_size;
     Display display;
 
@@ -113,7 +115,7 @@ public class Dash extends Application {
     int x, y;
 
     //Route param
-    protected Mat routeMat;
+    protected Mat routeMat = new Mat(400, 400, CV_8UC3);
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -148,6 +150,9 @@ public class Dash extends Application {
         display = wm.getDefaultDisplay();
         d_size = new Point();
         display.getSize(d_size);
+
+        bgm = MediaPlayer.create(this, R.raw.bgm);
+
     }
 
 
@@ -338,11 +343,10 @@ public class Dash extends Application {
         return ((x >= location[0] && x <= realRight) && (y >= location[1] && y <= realBottom));
     }
 
-    protected void OutputSound(MediaPlayer mp, String sound)
-    {
+    protected void OutputSound(MediaPlayer mp, String sound) {
         if(mp != null) {
             mp.reset();
-            mp.release();
+        //    mp.release();
         }
         if(sound == "msg1")
             mp = MediaPlayer.create(this, R.raw.msg1);
@@ -354,6 +358,7 @@ public class Dash extends Application {
             mp = MediaPlayer.create(this,R.raw.success);
         mp.start();
     }
+
 
     public void LoadRange(String path)throws IOException{
         FileInputStream ios = openFileInput(path);
