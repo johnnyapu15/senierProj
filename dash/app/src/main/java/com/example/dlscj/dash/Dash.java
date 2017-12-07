@@ -112,6 +112,12 @@ public class Dash extends Application {
     Point d_size;
     Display display;
 
+    Point camera_size;
+    boolean setCamera = false;
+
+    int width_offset;
+    int height_offset;
+
     int rel_x, rel_y;
     int x, y;
 
@@ -180,22 +186,30 @@ public class Dash extends Application {
         System.loadLibrary("native-lib");
     }
 
-    void getRealPose(int camera_width, int camera_height){
-        int width_offset = (d_size.x - camera_width) / 2;
-        int height_offset = (d_size.y - camera_height) / 2;
+    void getRealPose(){
+        if(setCamera == false){
+            camera_size.set(d_size.y * matInput.cols() / matInput.rows(), d_size.y);
+            width_offset = (d_size.x - camera_size.x) / 2;
+            height_offset = (d_size.y - camera_size.y) / 2;
+        }
+
         x = (int)(rsltarr[0] + rsltarr[2])/2;
         y = (int)(rsltarr[1] + rsltarr[3])/2;
-        rel_x = x * camera_width / matInput.cols() + width_offset;
-        rel_y = y * camera_height / matInput.rows() + height_offset;
+        rel_x = x * camera_size.x / matInput.cols() + width_offset;
+        rel_y = y * camera_size.y / matInput.rows() + height_offset;
     }
 
-    public void convert2cv(View frame, int deltaX, int deltaY, int camera_width, int camera_height){
-        int width_offset = (d_size.x - camera_width) / 2;
-        int height_offset = (d_size.y - camera_height) / 2;
+    public void convert2cv(View frame, int deltaX, int deltaY){
+        if(setCamera == false){
+            camera_size.set(d_size.y * matInput.cols() / matInput.rows(), d_size.y);
+            width_offset = (d_size.x - camera_size.x) / 2;
+            height_offset = (d_size.y - camera_size.y) / 2;
+        }
+
         x = (frame.getLeft() + frame.getRight()) / 2 + deltaX - width_offset;
         y = (frame.getBottom() + frame.getTop()) / 2 + deltaY - height_offset;
-        rel_x = x * matInput.cols() / camera_width;
-        rel_y = y * matInput.rows() / camera_height;
+        rel_x = x * matInput.cols() / camera_size.x;
+        rel_y = y * matInput.rows() / camera_size.y;
     }
 
     public void onCreate() {

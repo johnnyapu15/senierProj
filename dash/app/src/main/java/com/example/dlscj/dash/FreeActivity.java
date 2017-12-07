@@ -162,7 +162,7 @@ public class FreeActivity extends AppCompatActivity
                 start_flag = 1;
                 Log.d(TAG, "start : "+start_x+", "+start_y);
 
-                d.getRealPose(mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
+                d.getRealPose();
 
                 if(d.isTouchInside(back, d.rel_x, d.rel_y))
                     backButtonClicked(back);

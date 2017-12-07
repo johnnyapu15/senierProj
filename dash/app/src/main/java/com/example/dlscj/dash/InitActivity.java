@@ -120,7 +120,7 @@ public class InitActivity extends AppCompatActivity
         d.sleepHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                d.convert2cv(framec, 0, 0, mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
+                d.convert2cv(framec, 0, 0);
 
                 d.TouchCallback(d.rel_x, d.rel_y);
                 Animation anim= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.move);
@@ -131,25 +131,25 @@ public class InitActivity extends AppCompatActivity
                 d.sleepHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        d.convert2cv(framec, -450, -150, mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
+                        d.convert2cv(framec, -450, -150);
 
                         d.TouchCallback(d.rel_x, d.rel_y);
                         d.sleepHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                d.convert2cv(framec, 450, -150, mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
+                                d.convert2cv(framec, 450, -150);
 
                                 d.TouchCallback(d.rel_x, d.rel_y);
                                 d.sleepHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        d.convert2cv(framec, 450, 150, mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
+                                        d.convert2cv(framec, 450, 150);
 
                                         d.TouchCallback(d.rel_x, d.rel_y);
                                         d.sleepHandler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-                                                d.convert2cv(framec, -450, 150, mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
+                                                d.convert2cv(framec, -450, 150);
 
                                                 d.TouchCallback(d.rel_x, d.rel_y);
 

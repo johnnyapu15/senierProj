@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity
                 rel_y = (float)(d.rsltarr[1] + d.rsltarr[3] / 2) * d_size.y / d.matInput.rows();
                 */
 
-                d.getRealPose(mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
+                d.getRealPose();
 
                 if(d.isTouchInside(exit, d.rel_x, d.rel_y))
                     exitButtonClicked(exit);

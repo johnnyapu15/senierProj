@@ -321,7 +321,7 @@ public class PatternActivity extends AppCompatActivity
                 start_flag = 1;
                 Log.d(TAG, "start : " + start_x + ", " + start_y);
 
-               d.getRealPose(mOpenCvCameraView.getWidth(), mOpenCvCameraView.getHeight());
+               d.getRealPose();
 
                 if (d.isTouchInside(exit, d.rel_x, d.rel_y)) exitButtonpClicked(exit);
                 else if (d.isTouchInside(next, d.rel_x, d.rel_y)) nextButtonpClicked(next);
