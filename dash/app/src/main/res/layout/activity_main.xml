@@ -172,7 +172,7 @@
         android:onClick="logoClicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.922"
+        app:layout_constraintHorizontal_bias="0.17"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
@@ -181,13 +181,15 @@
     <ImageButton
         android:id="@+id/exitButton"
         style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="70sp"
+        android:layout_height="70sp"
+        android:layout_marginEnd="42dp"
         android:onClick="exitButtonClicked"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/activity_surface_view"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_media_previous" />
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
 </android.support.constraint.ConstraintLayout>

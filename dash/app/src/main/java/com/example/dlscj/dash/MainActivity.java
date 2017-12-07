@@ -94,7 +94,8 @@ public class MainActivity extends AppCompatActivity
         t3 = (TextView)findViewById(R.id.textView3);
         exit = (ImageButton)findViewById(R.id.exitButton);
 
-        if(d.bgm != null) d.bgm.start();
+        d.bgm = MediaPlayer.create(this, R.raw.bgm);
+        d.bgm.start();
 
         initControlText();
 
@@ -275,7 +276,10 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         if (mOpenCvCameraView != null) mOpenCvCameraView.disableView();
         CloseBluetoothGATT();
-        d.bgm.release();
+        if(d.bgm != null) {
+            d.bgm.release();
+        }
+        d.bgm = null;
         super.onDestroy();
     }
 

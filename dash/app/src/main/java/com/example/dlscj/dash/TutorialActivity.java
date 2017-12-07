@@ -232,7 +232,7 @@ public class TutorialActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             next.setVisibility(View.INVISIBLE);
-                            exit.setVisibility(View.INVISIBLE);
+                            //exit.setVisibility(View.INVISIBLE);
                             note.setVisibility(View.INVISIBLE);
                             t.setVisibility(View.INVISIBLE);
                         }
@@ -294,20 +294,21 @@ public class TutorialActivity extends AppCompatActivity
             deltaX = 0;
             deltaY = 0;
 
-            if((isOK == false) & (next.getVisibility() == View.INVISIBLE)) {
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                next.setVisibility(View.VISIBLE);
                                 exit.setVisibility(View.VISIBLE);
+                                if((isOK == false) & (next.getVisibility() == View.INVISIBLE))
+                                    next.setVisibility(View.VISIBLE);
                             }
                         });
                     }
                 }).start();
-            }
+
 
         }
 

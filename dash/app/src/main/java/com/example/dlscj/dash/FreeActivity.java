@@ -170,8 +170,7 @@ public class FreeActivity extends AppCompatActivity
                 rel_y = (float)start_y * d.d_size.y / d.matInput.rows();
 
 
-                if(d.isTouchInside(back, (int)rel_x, (int)rel_y))
-                    backButtonClicked(back);
+                if(d.isTouchInside(back, (int)rel_x, (int)rel_y)) backButtonClicked(back);
             }
             end_x = d.rsltarr[0] + d.rsltarr[2] / 2;
             end_y = d.rsltarr[1] + d.rsltarr[3] / 2;
