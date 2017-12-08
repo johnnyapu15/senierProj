@@ -56,7 +56,6 @@ public class PatternActivity extends AppCompatActivity
     private int start_flag = 0;
     private double start_x, start_y, end_x, end_y;
     private double deltaX = 0, deltaY = 0;
-    private float rel_x, rel_y;
 
     Timer timer = new Timer();
     private boolean isOK = false;
@@ -323,14 +322,11 @@ public class PatternActivity extends AppCompatActivity
                 start_flag = 1;
                 Log.d(TAG, "start : " + start_x + ", " + start_y);
 
+               d.getRealPose();
 
-                rel_x = (float) start_x * d.d_size.x / d.matInput.cols();
-                rel_y = (float) start_y * d.d_size.y / d.matInput.rows();
-
-
-                if (d.isTouchInside(exit, (int) rel_x, (int) rel_y)) exitButtonpClicked(exit);
-                else if (d.isTouchInside(next, (int) rel_x, (int) rel_y)) nextButtonpClicked(next);
-                else if (d.isTouchInside(refresh, (int) rel_x, (int) rel_y)) refreshButtonpClicked(refresh);
+                if (d.isTouchInside(exit, d.rel_x, d.rel_y)) exitButtonpClicked(exit);
+                else if (d.isTouchInside(next, d.rel_x, d.rel_y)) nextButtonpClicked(next);
+                else if (d.isTouchInside(refresh, d.rel_x, d.rel_y)) refreshButtonpClicked(refresh);
             }
             end_x = d.rsltarr[0] + d.rsltarr[2] / 2;
             end_y = d.rsltarr[1] + d.rsltarr[3] / 2;
